@@ -15,9 +15,4 @@ class TransactionsRepositoryImpl(
         val response = datasource.getTransactions()
         emit(response.map(transactionMapper))
     }
-
-    /*override fun getCurrencyRates(): Flow<List<ConversionRate>> = flow {
-        val response = datasource.getConversionRates()
-        emit()
-    }*/
 }

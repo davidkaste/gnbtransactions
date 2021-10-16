@@ -43,6 +43,4 @@ class TransactionsRepositoryImplTest {
         coVerify(exactly = 1) { datasource.getTransactions() }
         coVerify(exactly = 1) { mapper.invoke(any()) }
     }
-
-
 }

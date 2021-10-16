@@ -6,7 +6,7 @@ import com.davidcastella.gnb_api.models.ConversionRateResponseModel
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-interface GNBTransactionService {
+interface GNBankService {
     @GET("/transactions.json")
     suspend fun getTransactions(): List<TransactionResponseModel>
 

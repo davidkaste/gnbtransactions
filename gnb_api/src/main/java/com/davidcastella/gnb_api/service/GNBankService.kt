@@ -5,12 +5,15 @@ import com.davidcastella.gnb_api.models.TransactionResponseModel
 import com.davidcastella.gnb_api.models.ConversionRateResponseModel
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Headers
 
 interface GNBankService {
-    @GET("/transactions.json")
+    @GET("/transactions")
+    @Headers("Accept: application/json")
     suspend fun getTransactions(): List<TransactionResponseModel>
 
-    @GET("/rates.json")
+    @GET("/rates")
+    @Headers("Accept: application/json")
     suspend fun getCurrencyRates(): List<ConversionRateResponseModel>
 
     companion object {

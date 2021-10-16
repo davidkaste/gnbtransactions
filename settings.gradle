@@ -9,3 +9,4 @@ dependencyResolutionManagement {
 rootProject.name = "GNB Transactions"
 include ':app'
 include ':gnb_api'
+include ':domain'

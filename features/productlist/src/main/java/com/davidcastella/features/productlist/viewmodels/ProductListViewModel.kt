@@ -10,7 +10,6 @@ import com.davidcastella.features.productlist.mappers.TransactionListMapper
 import com.davidcastella.features.productlist.models.ProductTransactionsUI
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
 
 class ProductListViewModel(
     private val getTransactions: GetTransactions,
@@ -31,7 +30,7 @@ class ProductListViewModel(
         object Loading : ViewState()
         object Empty : ViewState()
         class Success(val productNameList: List<String>) : ViewState()
-        class ProductDetails(val productTransactions: List<BigDecimal>) : ViewState()
+        class ProductDetails(val productTransactions: ProductTransactionsUI) : ViewState()
     }
 
     sealed class ViewEvent {
@@ -59,5 +58,5 @@ class ProductListViewModel(
     }
 
     private fun onProductClick(productName: String) =
-        _viewState.postValue(ViewState.ProductDetails(productList.first { it.productSku == productName }.amountList))
+        _viewState.postValue(ViewState.ProductDetails(productList.first { it.productSku == productName }))
 }

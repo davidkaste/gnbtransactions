@@ -10,6 +10,7 @@ import com.davidcastella.features.productlist.mappers.TransactionListMapper
 import com.davidcastella.features.productlist.models.ProductTransactionsUI
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 class ProductListViewModel(
     private val getTransactions: GetTransactions,
@@ -24,18 +25,23 @@ class ProductListViewModel(
     val viewState: LiveData<ViewState>
         get() = _viewState
 
+    private lateinit var productList: List<ProductTransactionsUI>
+
     sealed class ViewState {
         object Loading : ViewState()
         object Empty : ViewState()
-        class Success(val data: List<ProductTransactionsUI>) : ViewState()
+        class Success(val productNameList: List<String>) : ViewState()
+        class ProductDetails(val productTransactions: List<BigDecimal>) : ViewState()
     }
 
     sealed class ViewEvent {
-        object Start: ViewEvent()
+        object OnStart : ViewEvent()
+        class OnProductClick(val productName: String) : ViewEvent()
     }
 
-    fun dispatchEvent(event: ViewEvent) = when(event) {
-        is ViewEvent.Start -> onStart()
+    fun dispatchEvent(event: ViewEvent) = when (event) {
+        is ViewEvent.OnStart -> onStart()
+        is ViewEvent.OnProductClick -> onProductClick(event.productName)
     }
 
     private fun onStart() {
@@ -43,9 +49,15 @@ class ProductListViewModel(
         viewModelScope.launch {
             getTransactions(DEFAULT_CURRENCY)
                 .collect {
-                    val productList = transactionListMapper(it)
-                    _viewState.postValue(ViewState.Success(productList))
+                    if (it.isEmpty()) _viewState.postValue(ViewState.Empty)
+                    else {
+                        productList = transactionListMapper(it)
+                        _viewState.postValue(ViewState.Success(productList.map { it.productSku }))
+                    }
                 }
         }
     }
+
+    private fun onProductClick(productName: String) =
+        _viewState.postValue(ViewState.ProductDetails(productList.first { it.productSku == productName }.amountList))
 }

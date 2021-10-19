@@ -1,9 +1,9 @@
 package com.davidcastella.domain.transactions.interactors
 
-import com.davidcastella.domain.NoParams
 import com.davidcastella.domain.conversionrates.entities.ConversionRate
 import com.davidcastella.domain.conversionrates.entities.CurrencyCode
 import com.davidcastella.domain.conversionrates.interactors.GetConversionRates
+import com.davidcastella.domain.core.NoParams
 import com.davidcastella.domain.transactions.entities.Transaction
 import com.davidcastella.domain.transactions.repositories.TransactionsRepository
 import io.mockk.coEvery
@@ -13,11 +13,9 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
-
 import org.junit.Before
 import org.junit.Test
 import java.math.BigDecimal
-import java.math.RoundingMode
 
 class GetTransactionsTest {
 

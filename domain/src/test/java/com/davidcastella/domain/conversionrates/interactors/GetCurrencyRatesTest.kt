@@ -1,8 +1,8 @@
 package com.davidcastella.domain.conversionrates.interactors
 
-import com.davidcastella.domain.NoParams
 import com.davidcastella.domain.conversionrates.entities.ConversionRate
 import com.davidcastella.domain.conversionrates.repositories.ConversionRatesRepository
+import com.davidcastella.domain.core.NoParams
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk

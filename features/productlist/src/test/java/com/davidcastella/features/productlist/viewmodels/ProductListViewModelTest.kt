@@ -1,6 +1,8 @@
 package com.davidcastella.features.productlist.viewmodels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.davidcastella.domain.conversionrates.entities.CurrencyCode
+import com.davidcastella.domain.core.util.toCurrencyString
 import com.davidcastella.domain.transactions.entities.Transaction
 import com.davidcastella.domain.transactions.interactors.GetTransactions
 import com.davidcastella.features.productlist.mappers.TransactionListMapper
@@ -93,7 +95,7 @@ class ProductListViewModelTest {
                 is ProductListViewModel.ViewState.Loading -> assert(true)
                 is ProductListViewModel.ViewState.Success -> assert(true)
                 is ProductListViewModel.ViewState.ProductDetails -> {
-                    assertEquals(BigDecimal(34.6), it.productTransactions.first())
+                    assertEquals(BigDecimal(34.6).toCurrencyString(CurrencyCode.EUR), it.amounts.first())
                     assert(true)
                 }
                 else -> assert(false)

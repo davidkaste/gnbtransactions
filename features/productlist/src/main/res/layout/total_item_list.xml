@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/productItemContainer"
+    android:id="@+id/totalItemContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
-    android:foreground="?android:attr/selectableItemBackground"
     android:paddingBottom="@dimen/m"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
         <TextView
-            android:id="@+id/productTextView"
+            android:id="@+id/totalTitleTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/m"
@@ -19,17 +17,22 @@
             android:layout_marginEnd="@dimen/l"
             app:layout_constraintTop_toTopOf="parent"
             android:gravity="start"
-            tools:text="ProductName"
-            style="@style/TextAppearance.MaterialComponents.Headline5" />
+            tools:text="Total"
+            style="@style/TextAppearance.MaterialComponents.Headline4" />
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+        <TextView
+            android:id="@+id/totalValueTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/m"
+            android:layout_marginBottom="@dimen/m"
+            android:layout_marginStart="@dimen/l"
             android:layout_marginEnd="@dimen/l"
-            android:src="@drawable/ic_chevron_right"
-            app:tint="?attr/colorOnBackground"
-            app:layout_constraintTop_toTopOf="@id/productTextView"
-            app:layout_constraintBottom_toBottomOf="@id/productTextView"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            android:gravity="end"
+            tools:text="€1,234.56"
+            android:text="@string/total"
+            android:textStyle="bold"
+            style="@style/TextAppearance.MaterialComponents.Headline4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

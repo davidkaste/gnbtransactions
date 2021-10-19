@@ -1,5 +1,6 @@
 package com.davidcastella.features.productlist.views
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -7,17 +8,22 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.davidcastella.features.productlist.R
 import com.davidcastella.features.productlist.adapters.ProductsAdapter
-import com.davidcastella.features.productlist.databinding.ActivityTransactionListBinding
-import com.davidcastella.features.productlist.models.ProductTransactionsUI
+import com.davidcastella.features.productlist.databinding.ActivityProductListBinding
 import com.davidcastella.features.productlist.viewmodels.ProductListViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ProductListActivity : AppCompatActivity() {
 
+    companion object {
+        const val PRODUCT_NAME_KEY = "productName"
+        const val AMOUNT_LIST_KEY = "amountList"
+        const val TOTAL_LIST_KEY = "total"
+    }
+
     private val viewModel: ProductListViewModel by viewModel()
 
-    private val binding: ActivityTransactionListBinding by lazy {
-        ActivityTransactionListBinding.inflate(layoutInflater)
+    private val binding: ActivityProductListBinding by lazy {
+        ActivityProductListBinding.inflate(layoutInflater)
     }
 
     private lateinit var adapter: ProductsAdapter
@@ -33,7 +39,7 @@ class ProductListActivity : AppCompatActivity() {
                 is ProductListViewModel.ViewState.Loading -> setLoading(true)
                 is ProductListViewModel.ViewState.Empty -> setEmpty()
                 is ProductListViewModel.ViewState.Success -> setSuccess(it.productNameList, adapter)
-                is ProductListViewModel.ViewState.ProductDetails -> openProductDetailsScreen(it.productTransactions)
+                is ProductListViewModel.ViewState.ProductDetails -> openProductDetailsScreen(it.productName, it.amounts, it.total)
             }
         }
 
@@ -41,7 +47,7 @@ class ProductListActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        adapter = ProductsAdapter()
+        adapter = ProductsAdapter(::onItemClick)
         binding.productList.adapter = adapter
 
         val dividerItemDecoration =
@@ -53,6 +59,10 @@ class ProductListActivity : AppCompatActivity() {
             )!!
         )
         binding.productList.addItemDecoration(dividerItemDecoration)
+    }
+
+    private fun onItemClick(product: String) {
+        viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnProductClick(product))
     }
 
     private fun setLoading(isLoading: Boolean) {
@@ -70,7 +80,17 @@ class ProductListActivity : AppCompatActivity() {
         adapter.updateData(data)
     }
 
-    private fun openProductDetailsScreen(data: ProductTransactionsUI) {
+    private fun openProductDetailsScreen(productName: String, amounts: List<String>, total: String) {
+        val intent = Intent(baseContext, ProductDetailActivity::class.java).apply {
+            val bundle = Bundle().apply {
+                putString(TOTAL_LIST_KEY, total)
+                putStringArrayList(AMOUNT_LIST_KEY, amounts.toCollection(ArrayList<String>()))
+                putString(PRODUCT_NAME_KEY, productName)
+            }
+            putExtras(bundle)
+        }
+
+        startActivity(intent)
     }
 
 }

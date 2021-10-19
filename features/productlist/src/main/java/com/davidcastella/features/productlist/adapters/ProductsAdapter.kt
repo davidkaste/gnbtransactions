@@ -7,11 +7,19 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.davidcastella.features.productlist.R
 
-class ProductsAdapter() : RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
+class ProductsAdapter(private val onItemClick: (String) -> Unit) : RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
     private var productDataSet: List<String> = listOf()
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
-        val productTextView: TextView = view.findViewById(R.id.productTextView)
+        private val productTextView: TextView = view.findViewById(R.id.productTextView)
+        private val productContainer: View = view.findViewById(R.id.productItemContainer)
+
+        fun bind(productName: String, onItemClick: (String) -> Unit) {
+            productTextView.text = productName
+            productContainer.setOnClickListener {
+                onItemClick(productName)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -22,7 +30,7 @@ class ProductsAdapter() : RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.productTextView.text = productDataSet[position]
+        holder.bind(productDataSet[position], onItemClick)
     }
 
     override fun getItemCount() = productDataSet.size

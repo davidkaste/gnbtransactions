@@ -4,7 +4,10 @@
 
     <application>
         <activity
-            android:name="com.davidcastella.features.productlist.views.ProductListActivity"
+            android:name=".views.ProductDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.ProductListActivity"
             android:exported="true" />
     </application>
 

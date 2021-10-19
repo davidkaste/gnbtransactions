@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.davidcastella.gnbtransactions">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
+        android:name=".GNBApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -10,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GNBTransactions">
         <activity
-            android:name=".MainActivity"
+            android:name="com.davidcastella.features.productlist.views.ProductListActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

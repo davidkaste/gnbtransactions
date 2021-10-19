@@ -15,6 +15,9 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
 
+    //di
+    implementation "io.insert-koin:koin-core:$koin_version"
+
     testImplementation "io.mockk:mockk:$mockk_version"
     testImplementation "junit:junit:$junit_version"
 }

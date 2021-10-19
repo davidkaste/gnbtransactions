@@ -10,7 +10,10 @@ buildscript {
         espresso_version = "3.4.0"
         retrofit_version = "2.9.0"
         mockk_version = "1.11.0"
-        coroutines_version = "1.4.1"
+        coroutines_version = "1.5.0"
+        lifecycle_version = "2.3.1"
+        navigation_version = "2.3.5"
+        koin_version= "3.0.1"
     }
     repositories {
         google()

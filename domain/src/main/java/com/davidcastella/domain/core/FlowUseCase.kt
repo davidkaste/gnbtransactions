@@ -1,4 +1,4 @@
-package com.davidcastella.domain
+package com.davidcastella.domain.core
 
 import kotlinx.coroutines.flow.Flow
 

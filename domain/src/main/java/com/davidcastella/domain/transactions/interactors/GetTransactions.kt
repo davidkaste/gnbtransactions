@@ -1,10 +1,10 @@
 package com.davidcastella.domain.transactions.interactors
 
-import com.davidcastella.domain.FlowUseCase
-import com.davidcastella.domain.NoParams
 import com.davidcastella.domain.conversionrates.entities.CurrencyCode
 import com.davidcastella.domain.conversionrates.interactors.GetConversionRates
 import com.davidcastella.domain.conversionrates.util.getConversionRate
+import com.davidcastella.domain.core.FlowUseCase
+import com.davidcastella.domain.core.NoParams
 import com.davidcastella.domain.transactions.entities.Transaction
 import com.davidcastella.domain.transactions.repositories.TransactionsRepository
 import kotlinx.coroutines.flow.Flow

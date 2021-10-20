@@ -33,7 +33,7 @@ It contains the _viewmodels_ and _views_ (_activities_, _fragments_...). The _Vi
 
 ## Feedback
 #### Pros
-- [] TBD
+- [ ] TBD
 
 #### Cons
 - [ ] TBD

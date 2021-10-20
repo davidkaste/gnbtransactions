@@ -2,6 +2,7 @@ package com.davidcastella.domain.transactions.interactors
 
 import com.davidcastella.domain.conversionrates.entities.CurrencyCode
 import com.davidcastella.domain.conversionrates.interactors.GetConversionRates
+import com.davidcastella.domain.conversionrates.repositories.ConversionRatesRepository
 import com.davidcastella.domain.conversionrates.util.getConversionRate
 import com.davidcastella.domain.core.FlowUseCase
 import com.davidcastella.domain.core.NoParams
@@ -13,11 +14,11 @@ import java.math.RoundingMode
 
 class GetTransactions(
     private val repository: TransactionsRepository,
-    private val getConversionRates: GetConversionRates
+    private val conversionRatesRepository: ConversionRatesRepository
 ) : FlowUseCase<CurrencyCode, List<Transaction>> {
     override fun invoke(currencyCode: CurrencyCode): Flow<List<Transaction>> =
         repository.getTransactions()
-            .combine(getConversionRates(NoParams)) { transactionList, conversionRates ->
+            .combine(conversionRatesRepository.getConversionRates()) { transactionList, conversionRates ->
                 transactionList.map {
                     if (it.currency == currencyCode.toString()) return@map it
                     val rate =

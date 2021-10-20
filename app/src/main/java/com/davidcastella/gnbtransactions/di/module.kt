@@ -2,7 +2,6 @@ package com.davidcastella.gnbtransactions.di
 
 import com.davidcastella.data.conversionrates.di.conversionRatesDataModule
 import com.davidcastella.data.transactions.di.transactionDataModule
-import com.davidcastella.domain.conversionrates.di.conversionRatesDomainModule
 import com.davidcastella.domain.transactions.di.transactionsDomainModule
 import com.davidcastella.features.productlist.di.productListModule
 import com.davidcastella.gnb_api.di.apiModule
@@ -17,7 +16,6 @@ val mainModule = module {
             conversionRatesDataModule,
             transactionDataModule,
             //domain
-            conversionRatesDomainModule,
             transactionsDomainModule,
             //presentation
             productListModule,

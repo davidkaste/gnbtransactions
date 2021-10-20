@@ -2,8 +2,7 @@ package com.davidcastella.domain.transactions.interactors
 
 import com.davidcastella.domain.conversionrates.entities.ConversionRate
 import com.davidcastella.domain.conversionrates.entities.CurrencyCode
-import com.davidcastella.domain.conversionrates.interactors.GetConversionRates
-import com.davidcastella.domain.core.NoParams
+import com.davidcastella.domain.conversionrates.repositories.ConversionRatesRepository
 import com.davidcastella.domain.transactions.entities.Transaction
 import com.davidcastella.domain.transactions.repositories.TransactionsRepository
 import io.mockk.coEvery
@@ -22,7 +21,7 @@ class GetTransactionsTest {
     private lateinit var useCase: GetTransactions
 
     private val repository: TransactionsRepository = mockk()
-    private val getConversionRates: GetConversionRates = mockk()
+    private val conversionRatesRepository: ConversionRatesRepository = mockk()
 
     @Before
     fun setUp() {
@@ -35,9 +34,9 @@ class GetTransactionsTest {
         )
 
         coEvery { repository.getTransactions() } returns flow { emit(transactionList) }
-        coEvery { getConversionRates(NoParams) } returns flow { emit(conversionRates) }
+        coEvery { conversionRatesRepository.getConversionRates() } returns flow { emit(conversionRates) }
 
-        useCase = GetTransactions(repository, getConversionRates)
+        useCase = GetTransactions(repository, conversionRatesRepository)
     }
 
     @Test
@@ -46,7 +45,7 @@ class GetTransactionsTest {
             useCase(CurrencyCode.EUR)
 
             coVerify(exactly = 1) { repository.getTransactions() }
-            coVerify(exactly = 1) { getConversionRates(NoParams) }
+            coVerify(exactly = 1) { conversionRatesRepository.getConversionRates() }
         }
 
     @Test

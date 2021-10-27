@@ -11,5 +11,6 @@ class RemoteGNBConversionRatesDatasource(
 
     private val service = serviceApi.api.create(GNBankService::class.java)
 
-    override suspend fun getConversionRates(): List<ConversionRateResponseModel> = service.getCurrencyRates()
+    override suspend fun getConversionRates(): List<ConversionRateResponseModel> =
+        service.getCurrencyRates()
 }

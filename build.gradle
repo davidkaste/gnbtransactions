@@ -15,6 +15,7 @@ buildscript {
         navigation_version = "2.3.5"
         koin_version= "3.0.1"
         arch_core_testing_version = "2.1.0"
+        arrow_version = "1.0.1"
     }
     repositories {
         google()

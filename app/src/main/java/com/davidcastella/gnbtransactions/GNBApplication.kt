@@ -1,14 +1,7 @@
 package com.davidcastella.gnbtransactions
 
 import android.app.Application
-import com.davidcastella.gnbtransactions.di.mainModule
-import org.koin.core.context.startKoin
+import dagger.hilt.android.HiltAndroidApp
 
-class GNBApplication: Application() {
-    override fun onCreate() {
-        super.onCreate()
-        startKoin {
-            modules(mainModule)
-        }
-    }
-}
+@HiltAndroidApp
+class GNBApplication: Application()

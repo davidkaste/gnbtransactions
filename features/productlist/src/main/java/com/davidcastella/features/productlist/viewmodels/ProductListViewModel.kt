@@ -12,11 +12,14 @@ import com.davidcastella.domain.transactions.entities.Transaction
 import com.davidcastella.domain.transactions.interactors.GetTransactions
 import com.davidcastella.features.productlist.mappers.TransactionListMapper
 import com.davidcastella.features.productlist.models.ProductTransactionsUI
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+import javax.inject.Inject
 
-class ProductListViewModel(
+@HiltViewModel
+class ProductListViewModel @Inject constructor(
     private val getTransactions: GetTransactions,
     private val transactionListMapper: TransactionListMapper
 ) : ViewModel() {

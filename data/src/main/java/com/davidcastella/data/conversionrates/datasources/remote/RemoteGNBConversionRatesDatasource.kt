@@ -4,8 +4,9 @@ import com.davidcastella.data.conversionrates.datasources.GNBConversionRatesData
 import com.davidcastella.gnb_api.BankServiceAPI
 import com.davidcastella.gnb_api.models.ConversionRateResponseModel
 import com.davidcastella.gnb_api.service.GNBankService
+import javax.inject.Inject
 
-class RemoteGNBConversionRatesDatasource(
+class RemoteGNBConversionRatesDatasource @Inject constructor(
     serviceApi: BankServiceAPI
 ): GNBConversionRatesDatasource {
 

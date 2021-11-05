@@ -12,8 +12,9 @@ import com.davidcastella.domain.transactions.repositories.TransactionsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import java.math.RoundingMode
+import javax.inject.Inject
 
-class GetTransactions(
+class GetTransactions @Inject constructor(
     private val repository: TransactionsRepository,
     private val conversionRatesRepository: ConversionRatesRepository
 ) : FlowUseCase<CurrencyCode, Either<Failure, List<Transaction>>> {

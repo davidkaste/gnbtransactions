@@ -1,6 +1,7 @@
 plugins {
     id 'java-library'
     id 'kotlin'
+    id 'kotlin-kapt'
 }
 
 java {
@@ -16,7 +17,8 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
 
     //di
-    implementation "io.insert-koin:koin-core:$koin_version"
+    implementation "com.google.dagger:hilt-core:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     // arrow
     implementation "io.arrow-kt:arrow-core:$arrow_version"

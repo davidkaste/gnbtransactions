@@ -10,8 +10,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.net.UnknownHostException
+import javax.inject.Inject
 
-class TransactionsRepositoryImpl(
+class TransactionsRepositoryImpl @Inject constructor(
     private val datasource: GNBTransactionsDatasource,
     private val transactionMapper: TransactionResponseModelMapper
 ) : TransactionsRepository {

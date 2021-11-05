@@ -5,13 +5,15 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.davidcastella.features.productlist.R
 import com.davidcastella.features.productlist.adapters.ProductsAdapter
 import com.davidcastella.features.productlist.databinding.ActivityProductListBinding
 import com.davidcastella.features.productlist.viewmodels.ProductListViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProductListActivity : AppCompatActivity() {
 
     companion object {
@@ -20,7 +22,7 @@ class ProductListActivity : AppCompatActivity() {
         const val TOTAL_LIST_KEY = "total"
     }
 
-    private val viewModel: ProductListViewModel by viewModel()
+    private lateinit var viewModel: ProductListViewModel
 
     private val binding: ActivityProductListBinding by lazy {
         ActivityProductListBinding.inflate(layoutInflater)
@@ -31,6 +33,7 @@ class ProductListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        viewModel = ViewModelProvider(this)[ProductListViewModel::class.java]
 
         setupRecyclerView()
 
@@ -39,7 +42,12 @@ class ProductListActivity : AppCompatActivity() {
                 is ProductListViewModel.ViewState.Loading -> setLoading(true)
                 is ProductListViewModel.ViewState.Empty -> setEmpty()
                 is ProductListViewModel.ViewState.Success -> setSuccess(it.productNameList, adapter)
-                is ProductListViewModel.ViewState.ProductDetails -> openProductDetailsScreen(it.productName, it.amounts, it.total)
+                is ProductListViewModel.ViewState.ProductDetails -> openProductDetailsScreen(
+                    it.productName,
+                    it.amounts,
+                    it.total
+                )
+                is ProductListViewModel.ViewState.Error -> setError(it.errorState)
             }
         }
 
@@ -80,7 +88,11 @@ class ProductListActivity : AppCompatActivity() {
         adapter.updateData(data)
     }
 
-    private fun openProductDetailsScreen(productName: String, amounts: List<String>, total: String) {
+    private fun openProductDetailsScreen(
+        productName: String,
+        amounts: List<String>,
+        total: String
+    ) {
         val intent = Intent(baseContext, ProductDetailActivity::class.java).apply {
             val bundle = Bundle().apply {
                 putString(TOTAL_LIST_KEY, total)
@@ -91,6 +103,19 @@ class ProductListActivity : AppCompatActivity() {
         }
 
         startActivity(intent)
+    }
+
+    private fun setError(error: ProductListViewModel.ErrorState) = when (error) {
+        ProductListViewModel.ErrorState.GENERIC_ERROR -> setErrorView(getString(R.string.error_generic))
+        ProductListViewModel.ErrorState.CONNECTION_ERROR -> setErrorView(getString(R.string.error_connection))
+    }
+
+    private fun setErrorView(errorString: String) {
+        binding.productsLoading.visibility = View.GONE
+        binding.errorProductsTextView.apply {
+            text = errorString
+            visibility = View.VISIBLE
+        }
     }
 
 }

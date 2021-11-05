@@ -4,8 +4,9 @@ import com.davidcastella.data.transactions.datasources.GNBTransactionsDatasource
 import com.davidcastella.gnb_api.BankServiceAPI
 import com.davidcastella.gnb_api.models.TransactionResponseModel
 import com.davidcastella.gnb_api.service.GNBankService
+import javax.inject.Inject
 
-class RemoteGNBTransactionsDatasource(
+class RemoteGNBTransactionsDatasource @Inject constructor(
     serviceApi: BankServiceAPI
 ): GNBTransactionsDatasource {
 

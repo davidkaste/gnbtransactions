@@ -5,13 +5,15 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.davidcastella.features.productlist.R
 import com.davidcastella.features.productlist.adapters.ProductsAdapter
 import com.davidcastella.features.productlist.databinding.ActivityProductListBinding
 import com.davidcastella.features.productlist.viewmodels.ProductListViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProductListActivity : AppCompatActivity() {
 
     companion object {
@@ -20,7 +22,7 @@ class ProductListActivity : AppCompatActivity() {
         const val TOTAL_LIST_KEY = "total"
     }
 
-    private val viewModel: ProductListViewModel by viewModel()
+    private lateinit var viewModel: ProductListViewModel
 
     private val binding: ActivityProductListBinding by lazy {
         ActivityProductListBinding.inflate(layoutInflater)
@@ -31,6 +33,7 @@ class ProductListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        viewModel = ViewModelProvider(this)[ProductListViewModel::class.java]
 
         setupRecyclerView()
 

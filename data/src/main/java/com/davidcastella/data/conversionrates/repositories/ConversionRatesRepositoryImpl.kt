@@ -10,8 +10,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.net.UnknownHostException
+import javax.inject.Inject
 
-class ConversionRatesRepositoryImpl(
+class ConversionRatesRepositoryImpl @Inject constructor(
     private val datasource: GNBConversionRatesDatasource,
     private val conversionRateMapper: ConversionRateResponseModelMapper
 ): ConversionRatesRepository {

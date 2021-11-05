@@ -11,10 +11,15 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
+import okhttp3.MediaType
+import okhttp3.ResponseBody
 import org.junit.Assert.*
 
 import org.junit.Before
 import org.junit.Test
+import retrofit2.HttpException
+import retrofit2.Response
+import java.net.UnknownHostException
 
 class TransactionsRepositoryImplTest {
 
@@ -25,7 +30,6 @@ class TransactionsRepositoryImplTest {
 
     private val transactionModel = TransactionResponseModel("Product", 12.3, "EUR")
     private val transaction = Transaction("Product", 12.3.toBigDecimal(), "EUR")
-    private val genericFailure = Failure.GENERIC_FAILURE
 
     @Before
     fun setUp() {
@@ -49,13 +53,45 @@ class TransactionsRepositoryImplTest {
     }
 
     @Test
-    fun `given repository when call getTransactions method fails then return correct data`() = runBlocking {
+    fun `given repository when call getTransactions method fails then return correct generic failure`() = runBlocking {
         coEvery { datasource.getTransactions() } throws Exception()
 
         val result = repository.getTransactions()
 
         result.collect {
-            assertEquals(genericFailure, (it as Either.Left).value)
+            assertEquals(Failure.GENERIC_FAILURE, (it as Either.Left).value)
+        }
+
+        coVerify(exactly = 1) { datasource.getTransactions() }
+        coVerify(exactly = 0) { mapper.invoke(any()) }
+    }
+
+    @Test
+    fun `given repository when call getTransactions method fails then return correct connection failure`() = runBlocking {
+        coEvery { datasource.getTransactions() } throws UnknownHostException()
+
+        val result = repository.getTransactions()
+
+        result.collect {
+            assertEquals(Failure.CONNECTION_FAILURE, (it as Either.Left).value)
+        }
+
+        coVerify(exactly = 1) { datasource.getTransactions() }
+        coVerify(exactly = 0) { mapper.invoke(any()) }
+    }
+
+    @Test
+    fun `given repository when call getTransactions method fails then return correct http failure`() = runBlocking {
+        coEvery { datasource.getTransactions() } throws
+                HttpException(
+                    Response.error<String>(
+                        404,
+                        ResponseBody.create(MediaType.parse(""), "")))
+
+        val result = repository.getTransactions()
+
+        result.collect {
+            assertEquals(Failure.HTTP_FAILURE, (it as Either.Left).value)
         }
 
         coVerify(exactly = 1) { datasource.getTransactions() }

@@ -8,6 +8,8 @@ import com.davidcastella.domain.conversionrates.repositories.ConversionRatesRepo
 import com.davidcastella.domain.core.failure.Failure
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import retrofit2.HttpException
+import java.net.UnknownHostException
 
 class ConversionRatesRepositoryImpl(
     private val datasource: GNBConversionRatesDatasource,
@@ -17,7 +19,11 @@ class ConversionRatesRepositoryImpl(
         try {
             val response = datasource.getConversionRates()
             emit(Either.Right(response.map(conversionRateMapper)))
-        } catch (e: Exception) {
+        } catch (ex: UnknownHostException) {
+            emit(Either.Left(Failure.CONNECTION_FAILURE))
+        } catch (ex: HttpException) {
+            emit(Either.Left(Failure.HTTP_FAILURE))
+        } catch (ex: Exception) {
             emit(Either.Left(Failure.GENERIC_FAILURE))
         }
     }

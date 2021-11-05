@@ -1,10 +1,10 @@
 package com.davidcastella.gnb_api.service
 
-import retrofit2.http.GET
-import com.davidcastella.gnb_api.models.TransactionResponseModel
 import com.davidcastella.gnb_api.models.ConversionRateResponseModel
+import com.davidcastella.gnb_api.models.TransactionResponseModel
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
 import retrofit2.http.Headers
 
 interface GNBankService {

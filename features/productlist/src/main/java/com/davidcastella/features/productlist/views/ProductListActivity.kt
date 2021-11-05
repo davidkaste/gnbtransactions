@@ -39,7 +39,12 @@ class ProductListActivity : AppCompatActivity() {
                 is ProductListViewModel.ViewState.Loading -> setLoading(true)
                 is ProductListViewModel.ViewState.Empty -> setEmpty()
                 is ProductListViewModel.ViewState.Success -> setSuccess(it.productNameList, adapter)
-                is ProductListViewModel.ViewState.ProductDetails -> openProductDetailsScreen(it.productName, it.amounts, it.total)
+                is ProductListViewModel.ViewState.ProductDetails -> openProductDetailsScreen(
+                    it.productName,
+                    it.amounts,
+                    it.total
+                )
+                is ProductListViewModel.ViewState.Error -> setError(it.errorState)
             }
         }
 
@@ -80,7 +85,11 @@ class ProductListActivity : AppCompatActivity() {
         adapter.updateData(data)
     }
 
-    private fun openProductDetailsScreen(productName: String, amounts: List<String>, total: String) {
+    private fun openProductDetailsScreen(
+        productName: String,
+        amounts: List<String>,
+        total: String
+    ) {
         val intent = Intent(baseContext, ProductDetailActivity::class.java).apply {
             val bundle = Bundle().apply {
                 putString(TOTAL_LIST_KEY, total)
@@ -91,6 +100,19 @@ class ProductListActivity : AppCompatActivity() {
         }
 
         startActivity(intent)
+    }
+
+    private fun setError(error: ProductListViewModel.ErrorState) = when (error) {
+        ProductListViewModel.ErrorState.GENERIC_ERROR -> setErrorView(getString(R.string.error_generic))
+        ProductListViewModel.ErrorState.CONNECTION_ERROR -> setErrorView(getString(R.string.error_connection))
+    }
+
+    private fun setErrorView(errorString: String) {
+        binding.productsLoading.visibility = View.GONE
+        binding.errorProductsTextView.apply {
+            text = errorString
+            visibility = View.VISIBLE
+        }
     }
 
 }

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    compileSdk 30
+    compileSdk 31
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -35,6 +35,9 @@ dependencies {
     //di
     implementation "io.insert-koin:koin-android:$koin_version"
     implementation "io.insert-koin:koin-core:$koin_version"
+
+    // arrow
+    implementation "io.arrow-kt:arrow-core:$arrow_version"
 
     testImplementation "androidx.arch.core:core-testing:$arch_core_testing_version"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"

@@ -14,6 +14,9 @@ dependencies {
     //di
     implementation "io.insert-koin:koin-core:$koin_version"
 
+    // arrow
+    implementation "io.arrow-kt:arrow-core:$arrow_version"
+
     testImplementation "io.mockk:mockk:$mockk_version"
     testImplementation "junit:junit:$junit_version"
 }

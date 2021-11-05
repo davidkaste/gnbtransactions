@@ -1,7 +1,9 @@
 package com.davidcastella.features.productlist.viewmodels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import arrow.core.Either
 import com.davidcastella.domain.conversionrates.entities.CurrencyCode
+import com.davidcastella.domain.core.failure.Failure
 import com.davidcastella.domain.core.util.toCurrencyString
 import com.davidcastella.domain.transactions.entities.Transaction
 import com.davidcastella.domain.transactions.interactors.GetTransactions
@@ -45,7 +47,7 @@ class ProductListViewModelTest {
     @Test
     fun `given viewmodel when receive start event then request transactions`() {
         ArrangeBuilder()
-            .withUseCaseCall(listOf(Transaction("prod", BigDecimal(34.6), "EUR")))
+            .withUseCaseCallSuccess(listOf(Transaction("prod", BigDecimal(34.6), "EUR")))
             .withMapperCall(listOf(ProductTransactionsUI("prod", listOf(BigDecimal(34.6)))))
 
         viewModel.viewState.observeForever {
@@ -68,7 +70,7 @@ class ProductListViewModelTest {
     @Test
     fun `given viewmodel when receive start event then request empty transactions`() {
         ArrangeBuilder()
-            .withUseCaseCall(listOf())
+            .withUseCaseCallSuccess(listOf())
 
         viewModel.viewState.observeForever {
             when(it) {
@@ -85,9 +87,53 @@ class ProductListViewModelTest {
     }
 
     @Test
+    fun `given viewmodel when receive start event fails then request generic error state`() {
+        ArrangeBuilder()
+            .withUseCaseCallFailure(Failure.GENERIC_FAILURE)
+
+        viewModel.viewState.observeForever {
+            when(it) {
+                is ProductListViewModel.ViewState.Loading -> assert(true)
+                is ProductListViewModel.ViewState.Error -> {
+                    assert(true)
+                    assertEquals(ProductListViewModel.ErrorState.GENERIC_ERROR, it.errorState)
+                }
+                else -> assert(false)
+            }
+        }
+
+        viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
+
+        verify (exactly = 1) { useCase(any()) }
+        verify (exactly = 0) { mapper(any()) }
+    }
+
+    @Test
+    fun `given viewmodel when receive start event fails then request connection error state`() {
+        ArrangeBuilder()
+            .withUseCaseCallFailure(Failure.CONNECTION_FAILURE)
+
+        viewModel.viewState.observeForever {
+            when(it) {
+                is ProductListViewModel.ViewState.Loading -> assert(true)
+                is ProductListViewModel.ViewState.Error -> {
+                    assert(true)
+                    assertEquals(ProductListViewModel.ErrorState.CONNECTION_ERROR, it.errorState)
+                }
+                else -> assert(false)
+            }
+        }
+
+        viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
+
+        verify (exactly = 1) { useCase(any()) }
+        verify (exactly = 0) { mapper(any()) }
+    }
+
+    @Test
     fun `given viewmodel when receive on product click event then request empty transactions`() {
         ArrangeBuilder()
-            .withUseCaseCall(listOf(Transaction("prod", BigDecimal(34.6), "EUR")))
+            .withUseCaseCallSuccess(listOf(Transaction("prod", BigDecimal(34.6), "EUR")))
             .withMapperCall(listOf(ProductTransactionsUI("prod", listOf(BigDecimal(34.6)))))
 
         viewModel.viewState.observeForever {
@@ -107,8 +153,13 @@ class ProductListViewModelTest {
     }
 
     inner class ArrangeBuilder {
-        fun withUseCaseCall(response: List<Transaction>): ArrangeBuilder {
-            every { useCase(any()) } returns flow { emit(response) }
+        fun withUseCaseCallSuccess(response: List<Transaction>): ArrangeBuilder {
+            every { useCase(any()) } returns flow { emit(Either.Right(response)) }
+            return this
+        }
+
+        fun withUseCaseCallFailure(failure: Failure): ArrangeBuilder {
+            every { useCase(any()) } returns flow { emit(Either.Left(failure)) }
             return this
         }
 

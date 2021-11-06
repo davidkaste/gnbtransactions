@@ -13,7 +13,6 @@ buildscript {
         coroutines_version = "1.5.0"
         lifecycle_version = "2.4.0"
         navigation_version = "2.3.5"
-        koin_version= "3.0.1"
         arch_core_testing_version = "2.1.0"
         arrow_version = "1.0.1"
         hilt_version = "2.40"

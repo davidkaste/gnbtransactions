@@ -6,7 +6,7 @@ This app is part of a technical interview, but it can be used as a seed project.
 ### 1.1. Tech Stack
 |Feature|Library|Version|
 |---|---|---|
-| Dependency Injection (IoC) | Koin | 3.0.1 |
+| Dependency Injection (IoC) | Dagger Hilt | 2.40 |
 | HTTP Requests | Retrofit | 2.9.0 |
 | Async/Reactivity | Coroutines + Flow | 1.5.0 |
 | Unit Tests | JUnit | 4.13.2 |

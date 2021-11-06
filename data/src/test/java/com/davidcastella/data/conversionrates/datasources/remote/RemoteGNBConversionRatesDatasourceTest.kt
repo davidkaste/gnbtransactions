@@ -1,8 +1,7 @@
 package com.davidcastella.data.conversionrates.datasources.remote
 
-import com.davidcastella.gnb_api.BankServiceAPI
-import com.davidcastella.gnb_api.models.ConversionRateResponseModel
-import com.davidcastella.gnb_api.service.GNBankService
+import com.davidcastella.data.api.BankService
+import com.davidcastella.data.api.models.ConversionRateResponseModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -10,20 +9,15 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import retrofit2.Retrofit
 
 class RemoteGNBConversionRatesDatasourceTest {
 
     private lateinit var datasource: RemoteGNBConversionRatesDatasource
 
-    private val service: BankServiceAPI = mockk()
-    private val retrofit: Retrofit = mockk()
-    private val api: GNBankService = mockk()
+    private val service: BankService = mockk()
 
     @Before
     fun setUp() {
-        coEvery { service.api } returns retrofit
-        coEvery { retrofit.create(GNBankService::class.java) } returns api
         datasource = RemoteGNBConversionRatesDatasource(service)
     }
 
@@ -34,7 +28,7 @@ class RemoteGNBConversionRatesDatasourceTest {
 
         val cr = datasource.getConversionRates()
 
-        coVerify(exactly = 1) { service.api }
+        coVerify(exactly = 1) { service.getCurrencyRates() }
 
         val result = cr[0]
         assertEquals(expected.from, result.from)
@@ -44,7 +38,7 @@ class RemoteGNBConversionRatesDatasourceTest {
 
     inner class ArrangeBuilder {
         fun withGetConversionRatesSuccess(model: List<ConversionRateResponseModel>): ArrangeBuilder {
-            coEvery { api.getCurrencyRates() } returns model
+            coEvery { service.getCurrencyRates() } returns model
             return this
         }
     }

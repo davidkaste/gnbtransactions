@@ -1,6 +1,6 @@
 package com.davidcastella.data.transactions.repositories.mappers
 
-import com.davidcastella.gnb_api.models.TransactionResponseModel
+import com.davidcastella.data.api.models.TransactionResponseModel
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

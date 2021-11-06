@@ -1,16 +1,13 @@
 package com.davidcastella.data.transactions.datasources.remote
 
+import com.davidcastella.data.api.BankService
+import com.davidcastella.data.api.models.TransactionResponseModel
 import com.davidcastella.data.transactions.datasources.GNBTransactionsDatasource
-import com.davidcastella.gnb_api.BankServiceAPI
-import com.davidcastella.gnb_api.models.TransactionResponseModel
-import com.davidcastella.gnb_api.service.GNBankService
 import javax.inject.Inject
 
 class RemoteGNBTransactionsDatasource @Inject constructor(
-    serviceApi: BankServiceAPI
+    private val service: BankService
 ): GNBTransactionsDatasource {
-
-    private val service = serviceApi.api.create(GNBankService::class.java)
 
     override suspend fun getTransactions(): List<TransactionResponseModel> = service.getTransactions()
 }

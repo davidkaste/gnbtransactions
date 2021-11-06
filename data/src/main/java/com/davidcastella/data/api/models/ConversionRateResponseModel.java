@@ -1,4 +1,4 @@
-package com.davidcastella.gnb_api.models;
+package com.davidcastella.data.api.models;
 
 public class ConversionRateResponseModel {
     private final String from;

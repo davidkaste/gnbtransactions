@@ -8,8 +8,8 @@ import com.davidcastella.domain.transactions.entities.Transaction
 import com.davidcastella.domain.transactions.repositories.TransactionsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import retrofit2.HttpException
-import java.net.UnknownHostException
+import java.io.IOException
+import java.lang.RuntimeException
 import javax.inject.Inject
 
 class TransactionsRepositoryImpl @Inject constructor(
@@ -20,9 +20,9 @@ class TransactionsRepositoryImpl @Inject constructor(
         try {
             val response = datasource.getTransactions()
             emit(Either.Right(response.map(transactionMapper)))
-        } catch (ex: UnknownHostException) {
+        } catch (ex: IOException) {
             emit(Either.Left(Failure.CONNECTION_FAILURE))
-        } catch (ex: HttpException) {
+        } catch (ex: RuntimeException) {
             emit(Either.Left(Failure.HTTP_FAILURE))
         } catch (ex: Exception) {
             emit(Either.Left(Failure.GENERIC_FAILURE))

@@ -1,7 +1,7 @@
 package com.davidcastella.data.conversionrates.repositories.mappers
 
+import com.davidcastella.data.api.models.ConversionRateResponseModel
 import com.davidcastella.domain.conversionrates.entities.ConversionRate
-import com.davidcastella.gnb_api.models.ConversionRateResponseModel
 import javax.inject.Inject
 
 class ConversionRateResponseModelMapper @Inject constructor(): (ConversionRateResponseModel) -> ConversionRate {

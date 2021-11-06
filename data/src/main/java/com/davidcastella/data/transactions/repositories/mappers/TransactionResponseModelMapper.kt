@@ -1,7 +1,7 @@
 package com.davidcastella.data.transactions.repositories.mappers
 
+import com.davidcastella.data.api.models.TransactionResponseModel
 import com.davidcastella.domain.transactions.entities.Transaction
-import com.davidcastella.gnb_api.models.TransactionResponseModel
 import javax.inject.Inject
 
 class TransactionResponseModelMapper @Inject constructor(): (TransactionResponseModel) -> Transaction {

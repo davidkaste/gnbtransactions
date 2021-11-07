@@ -12,5 +12,5 @@ import dagger.hilt.components.SingletonComponent
 object ApiModule {
 
     @Provides
-    fun provideService(): BankService = GNBankService.create().create(GNBankService::class.java)
+    fun provideService(): BankService = GNBankService.create()
 }

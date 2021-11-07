@@ -21,9 +21,10 @@ interface GNBankService : BankService {
         private const val BASE_URL = "https://quiet-stone-2094.herokuapp.com/"
 
         @JvmStatic
-        fun create(): Retrofit = Retrofit.Builder()
+        fun create(): GNBankService = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+            .create(GNBankService::class.java)
     }
 }

@@ -11,7 +11,6 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
 import org.junit.Assert.assertEquals
-
 import org.junit.Before
 import org.junit.Test
 
@@ -43,8 +42,14 @@ class ProductsAdapterTest {
         adapter.onCreateViewHolder(viewGroupMock, 0)
 
         verify(exactly = 1) { viewGroupMock.context }
-        verify(exactly = 1) { LayoutInflater.from(any()) }
-        verify(exactly = 1) { inflaterMock.inflate(any<Int>(), any(), any()) }
+        verify(exactly = 1) { LayoutInflater.from(viewGroupMock.context) }
+        verify(exactly = 1) {
+            inflaterMock.inflate(
+                R.layout.product_item_list,
+                viewGroupMock,
+                false
+            )
+        }
         verify(exactly = 2) { mockView.findViewById<View>(any()) }
     }
 
@@ -88,9 +93,15 @@ class ProductsAdapterTest {
             inflaterMock: LayoutInflater,
         ): ArrangeBuilder {
             every { viewGroupMock.context } returns context
-            mockkStatic(LayoutInflater::class)
-            every { LayoutInflater.from(any()) } returns inflaterMock
-            every { inflaterMock.inflate(any<Int>(), any(), any()) } returns mockView
+            mockkStatic(LayoutInflater::from)
+            every { LayoutInflater.from(viewGroupMock.context) } returns inflaterMock
+            every {
+                inflaterMock.inflate(
+                    R.layout.product_item_list,
+                    viewGroupMock,
+                    false
+                )
+            } returns mockView
 
             return this
         }

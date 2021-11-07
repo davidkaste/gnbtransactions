@@ -1,8 +1,7 @@
 package com.davidcastella.data.transactions.datasources.remote
 
-import com.davidcastella.gnb_api.BankServiceAPI
-import com.davidcastella.gnb_api.models.TransactionResponseModel
-import com.davidcastella.gnb_api.service.GNBankService
+import com.davidcastella.data.api.BankService
+import com.davidcastella.data.api.models.TransactionResponseModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -10,20 +9,15 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import retrofit2.Retrofit
 
 internal class RemoteGNBTransactionsDatasourceTest {
 
     private lateinit var datasource: RemoteGNBTransactionsDatasource
 
-    private val service: BankServiceAPI = mockk()
-    private val retrofit: Retrofit = mockk()
-    private val api: GNBankService = mockk()
+    private val service: BankService = mockk()
 
     @Before
     fun setUp() {
-        coEvery { service.api } returns retrofit
-        coEvery { retrofit.create(GNBankService::class.java) } returns api
         datasource = RemoteGNBTransactionsDatasource(service)
     }
 
@@ -34,7 +28,7 @@ internal class RemoteGNBTransactionsDatasourceTest {
 
         val t = datasource.getTransactions()
 
-        coVerify(exactly = 1) { api.getTransactions() }
+        coVerify(exactly = 1) { service.getTransactions() }
 
         val result = t[0]
         assertEquals(expected.amount, result.amount, 0.0)
@@ -45,7 +39,7 @@ internal class RemoteGNBTransactionsDatasourceTest {
     inner class ArrangeBuilder {
 
         fun withGetTransactionsSuccess(model: List<TransactionResponseModel>): ArrangeBuilder {
-            coEvery { api.getTransactions() } returns model
+            coEvery { service.getTransactions() } returns model
             return this
         }
     }

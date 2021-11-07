@@ -10,11 +10,9 @@ java {
 }
 
 dependencies {
-    implementation project(":gnb_api")
     implementation project(":domain")
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
-    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
 
     //di
     implementation "com.google.dagger:hilt-core:$hilt_version"

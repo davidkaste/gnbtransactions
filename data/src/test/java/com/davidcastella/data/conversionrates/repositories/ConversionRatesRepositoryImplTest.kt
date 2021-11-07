@@ -1,23 +1,19 @@
 package com.davidcastella.data.conversionrates.repositories
 
 import arrow.core.Either
+import com.davidcastella.data.api.models.ConversionRateResponseModel
 import com.davidcastella.data.conversionrates.datasources.GNBConversionRatesDatasource
 import com.davidcastella.data.conversionrates.repositories.mappers.ConversionRateResponseModelMapper
 import com.davidcastella.domain.conversionrates.entities.ConversionRate
 import com.davidcastella.domain.core.failure.Failure
-import com.davidcastella.gnb_api.models.ConversionRateResponseModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
-import okhttp3.MediaType
-import okhttp3.ResponseBody
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import retrofit2.HttpException
-import retrofit2.Response
 import java.net.UnknownHostException
 
 class ConversionRatesRepositoryImplTest {
@@ -77,21 +73,21 @@ class ConversionRatesRepositoryImplTest {
         coVerify(exactly = 0) { mapper.invoke(any()) }
     }
 
-    @Test
-    fun `given repository when call getConversionRates method fails then return correct http failure`() = runBlocking {
-        coEvery { datasource.getConversionRates() } throws
-                HttpException(
-                    Response.error<String>(
-                        404,
-                        ResponseBody.create(MediaType.parse(""), "")))
-
-        val result = repository.getConversionRates()
-
-        result.collect {
-            Assert.assertEquals(Failure.HTTP_FAILURE, (it as Either.Left).value)
-        }
-
-        coVerify(exactly = 1) { datasource.getConversionRates() }
-        coVerify(exactly = 0) { mapper.invoke(any()) }
-    }
+//    @Test
+//    fun `given repository when call getConversionRates method fails then return correct http failure`() = runBlocking {
+//        coEvery { datasource.getConversionRates() } throws
+//                HttpException(
+//                    Response.error<String>(
+//                        404,
+//                        ResponseBody.create(MediaType.parse(""), "")))
+//
+//        val result = repository.getConversionRates()
+//
+//        result.collect {
+//            Assert.assertEquals(Failure.HTTP_FAILURE, (it as Either.Left).value)
+//        }
+//
+//        coVerify(exactly = 1) { datasource.getConversionRates() }
+//        coVerify(exactly = 0) { mapper.invoke(any()) }
+//    }
 }

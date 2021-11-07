@@ -8,6 +8,22 @@ plugins {
 android {
     compileSdk 31
 
+    defaultConfig {
+        minSdk 26
+        targetSdk 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -45,6 +61,8 @@ dependencies {
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     testImplementation "io.mockk:mockk:$mockk_version"
     testImplementation "junit:junit:$junit_version"
+
+    androidTestImplementation "io.mockk:mockk-android:$mockk_version"
     androidTestImplementation "androidx.test.ext:junit:$androidx_junit_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
 }

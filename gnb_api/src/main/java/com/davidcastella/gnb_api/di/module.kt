@@ -1,16 +1,16 @@
 package com.davidcastella.gnb_api.di
 
-import com.davidcastella.gnb_api.BankServiceAPI
-import com.davidcastella.gnb_api.GNBankServiceAPI
-import dagger.Binds
+import com.davidcastella.data.api.BankService
+import com.davidcastella.gnb_api.service.GNBankService
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class ApiModule {
+object ApiModule {
 
-    @Binds
-    abstract fun provideService(service: GNBankServiceAPI): BankServiceAPI
+    @Provides
+    fun provideService(): BankService = GNBankService.create()
 }

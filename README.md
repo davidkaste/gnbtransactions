@@ -30,6 +30,8 @@ It contains the _viewmodels_ and _views_ (_activities_, _fragments_...). The _Vi
 - [ ] Use Navigation Component
 - [X] Migrate from Koin to Dagger Hilt (In fact, Koin is not a DI library, but a service locator)
 - [ ] UI + Instrumented Tests
+  - [X] Adapters instrumented tests
+  - [ ] Activities Espresso tests
 
 ## Feedback
 #### Pros

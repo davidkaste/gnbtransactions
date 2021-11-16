@@ -111,7 +111,7 @@ class ProductListActivity : AppCompatActivity() {
     }
 
     private fun setErrorView(errorString: String) {
-        binding.productsLoading.visibility = View.GONE
+        setLoading(false)
         binding.errorProductsTextView.apply {
             text = errorString
             visibility = View.VISIBLE

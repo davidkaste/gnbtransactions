@@ -14,6 +14,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import java.io.IOException
 import java.net.UnknownHostException
 
 class TransactionsRepositoryImplTest {
@@ -63,7 +64,7 @@ class TransactionsRepositoryImplTest {
 
     @Test
     fun `given repository when call getTransactions method fails then return correct connection failure`() = runBlocking {
-        coEvery { datasource.getTransactions() } throws UnknownHostException()
+        coEvery { datasource.getTransactions() } throws IOException()
 
         val result = repository.getTransactions()
 
@@ -75,21 +76,17 @@ class TransactionsRepositoryImplTest {
         coVerify(exactly = 0) { mapper.invoke(any()) }
     }
 
-//    @Test
-//    fun `given repository when call getTransactions method fails then return correct http failure`() = runBlocking {
-//        coEvery { datasource.getTransactions() } throws
-//                HttpException(
-//                    Response.error<String>(
-//                        404,
-//                        ResponseBody.create(MediaType.parse(""), "")))
-//
-//        val result = repository.getTransactions()
-//
-//        result.collect {
-//            assertEquals(Failure.HTTP_FAILURE, (it as Either.Left).value)
-//        }
-//
-//        coVerify(exactly = 1) { datasource.getTransactions() }
-//        coVerify(exactly = 0) { mapper.invoke(any()) }
-//    }
+    @Test
+    fun `given repository when call getTransactions method fails then return correct http failure`() = runBlocking {
+        coEvery { datasource.getTransactions() } throws RuntimeException()
+
+        val result = repository.getTransactions()
+
+        result.collect {
+            assertEquals(Failure.HTTP_FAILURE, (it as Either.Left).value)
+        }
+
+        coVerify(exactly = 1) { datasource.getTransactions() }
+        coVerify(exactly = 0) { mapper.invoke(any()) }
+    }
 }

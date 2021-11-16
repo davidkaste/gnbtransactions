@@ -73,21 +73,17 @@ class ConversionRatesRepositoryImplTest {
         coVerify(exactly = 0) { mapper.invoke(any()) }
     }
 
-//    @Test
-//    fun `given repository when call getConversionRates method fails then return correct http failure`() = runBlocking {
-//        coEvery { datasource.getConversionRates() } throws
-//                HttpException(
-//                    Response.error<String>(
-//                        404,
-//                        ResponseBody.create(MediaType.parse(""), "")))
-//
-//        val result = repository.getConversionRates()
-//
-//        result.collect {
-//            Assert.assertEquals(Failure.HTTP_FAILURE, (it as Either.Left).value)
-//        }
-//
-//        coVerify(exactly = 1) { datasource.getConversionRates() }
-//        coVerify(exactly = 0) { mapper.invoke(any()) }
-//    }
+    @Test
+    fun `given repository when call getConversionRates method fails then return correct http failure`() = runBlocking {
+        coEvery { datasource.getConversionRates() } throws RuntimeException()
+
+        val result = repository.getConversionRates()
+
+        result.collect {
+            Assert.assertEquals(Failure.HTTP_FAILURE, (it as Either.Left).value)
+        }
+
+        coVerify(exactly = 1) { datasource.getConversionRates() }
+        coVerify(exactly = 0) { mapper.invoke(any()) }
+    }
 }

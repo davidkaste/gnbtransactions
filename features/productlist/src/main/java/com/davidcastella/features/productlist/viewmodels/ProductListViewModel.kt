@@ -1,7 +1,5 @@
 package com.davidcastella.features.productlist.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import arrow.core.Either
@@ -13,6 +11,8 @@ import com.davidcastella.domain.transactions.interactors.GetTransactions
 import com.davidcastella.features.productlist.mappers.TransactionListMapper
 import com.davidcastella.features.productlist.models.ProductTransactionsUI
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
@@ -28,13 +28,14 @@ class ProductListViewModel @Inject constructor(
         private val DEFAULT_CURRENCY = CurrencyCode.EUR
     }
 
-    private val _viewState: MutableLiveData<ViewState> = MutableLiveData()
-    val viewState: LiveData<ViewState>
+    private val _viewState: MutableStateFlow<ViewState> = MutableStateFlow(ViewState.Initial)
+    val viewState: StateFlow<ViewState>
         get() = _viewState
 
     private lateinit var productList: List<ProductTransactionsUI>
 
     sealed class ViewState {
+        object Initial : ViewState()
         object Loading : ViewState()
         object Empty : ViewState()
         class Success(val productNameList: List<String>) : ViewState()
@@ -62,7 +63,7 @@ class ProductListViewModel @Inject constructor(
     }
 
     private fun onStart() {
-        _viewState.postValue(ViewState.Loading)
+        _viewState.value = ViewState.Loading
         viewModelScope.launch {
             getTransactions(DEFAULT_CURRENCY)
                 .collect {
@@ -75,15 +76,16 @@ class ProductListViewModel @Inject constructor(
     }
 
     private fun handleError(error: Failure) = when (error) {
-        Failure.CONNECTION_FAILURE -> _viewState.postValue(ViewState.Error(ErrorState.CONNECTION_ERROR))
-        else -> _viewState.postValue(ViewState.Error(ErrorState.GENERIC_ERROR))
+        Failure.CONNECTION_FAILURE -> _viewState.value =
+            ViewState.Error(ErrorState.CONNECTION_ERROR)
+        else -> _viewState.value = ViewState.Error(ErrorState.GENERIC_ERROR)
     }
 
     private fun handleSuccess(list: List<Transaction>) {
-        if (list.isEmpty()) _viewState.postValue(ViewState.Empty)
+        if (list.isEmpty()) _viewState.value = ViewState.Empty
         else {
             productList = transactionListMapper(list)
-            _viewState.postValue(ViewState.Success(productList.map { it.productSku }))
+            _viewState.value = ViewState.Success(productList.map { it.productSku })
         }
     }
 
@@ -94,12 +96,10 @@ class ProductListViewModel @Inject constructor(
             total += it
             it.toCurrencyString(DEFAULT_CURRENCY)
         }
-        _viewState.postValue(
-            ViewState.ProductDetails(
-                product.productSku,
-                amounts,
-                total.toCurrencyString(DEFAULT_CURRENCY)
-            )
+        _viewState.value = ViewState.ProductDetails(
+            product.productSku,
+            amounts,
+            total.toCurrencyString(DEFAULT_CURRENCY)
         )
     }
 }

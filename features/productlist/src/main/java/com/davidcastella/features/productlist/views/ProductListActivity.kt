@@ -6,12 +6,16 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.davidcastella.features.productlist.R
 import com.davidcastella.features.productlist.adapters.ProductsAdapter
 import com.davidcastella.features.productlist.databinding.ActivityProductListBinding
 import com.davidcastella.features.productlist.viewmodels.ProductListViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ProductListActivity : AppCompatActivity() {
@@ -37,17 +41,20 @@ class ProductListActivity : AppCompatActivity() {
 
         setupRecyclerView()
 
-        viewModel.viewState.observe(this) {
-            when (it) {
-                is ProductListViewModel.ViewState.Loading -> setLoading(true)
-                is ProductListViewModel.ViewState.Empty -> setEmpty()
-                is ProductListViewModel.ViewState.Success -> setSuccess(it.productNameList, adapter)
-                is ProductListViewModel.ViewState.ProductDetails -> openProductDetailsScreen(
-                    it.productName,
-                    it.amounts,
-                    it.total
-                )
-                is ProductListViewModel.ViewState.Error -> setError(it.errorState)
+        lifecycleScope.launch {
+            viewModel.viewState.collect {
+                when (it) {
+                    is ProductListViewModel.ViewState.Loading -> setLoading(true)
+                    is ProductListViewModel.ViewState.Empty -> setEmpty()
+                    is ProductListViewModel.ViewState.Success -> setSuccess(it.productNameList, adapter)
+                    is ProductListViewModel.ViewState.ProductDetails -> openProductDetailsScreen(
+                        it.productName,
+                        it.amounts,
+                        it.total
+                    )
+                    is ProductListViewModel.ViewState.Error -> setError(it.errorState)
+                    else -> {}
+                }
             }
         }
 

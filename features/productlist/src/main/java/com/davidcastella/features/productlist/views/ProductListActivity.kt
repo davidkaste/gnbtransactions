@@ -13,7 +13,6 @@ import com.davidcastella.features.productlist.adapters.ProductsAdapter
 import com.davidcastella.features.productlist.databinding.ActivityProductListBinding
 import com.davidcastella.features.productlist.viewmodels.ProductListViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 

@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import arrow.core.Either
 import com.davidcastella.domain.conversionrates.entities.CurrencyCode
 import com.davidcastella.domain.core.failure.Failure
-import com.davidcastella.domain.core.util.toCurrencyString
 import com.davidcastella.domain.transactions.entities.Transaction
 import com.davidcastella.domain.transactions.interactors.GetTransactions
 import com.davidcastella.features.productlist.mappers.TransactionListMapper
@@ -15,7 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,7 +43,7 @@ class ProductListViewModel @Inject constructor(
 
     sealed class ViewEvent {
         object OnStart : ViewEvent()
-        object OnFinishLoading: ViewEvent()
+        object OnFinishLoading : ViewEvent()
     }
 
     enum class ErrorState {

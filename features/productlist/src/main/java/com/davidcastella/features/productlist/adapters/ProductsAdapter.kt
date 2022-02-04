@@ -1,21 +1,23 @@
 package com.davidcastella.features.productlist.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.davidcastella.features.productlist.R
+import com.davidcastella.features.productlist.models.ProductTransactionsUI
 
-class ProductsAdapter(private val onItemClick: (String) -> Unit) : RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
-    private var productDataSet: List<String> = listOf()
+class ProductsAdapter(private val onItemClick: (ProductTransactionsUI) -> Unit) : RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
+    private var productDataSet: List<ProductTransactionsUI> = listOf()
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         private val productTextView: TextView = view.findViewById(R.id.productTextView)
         private val productContainer: View = view.findViewById(R.id.productItemContainer)
 
-        fun bind(productName: String, onItemClick: (String) -> Unit) {
-            productTextView.text = productName
+        fun bind(productName: ProductTransactionsUI, onItemClick: (ProductTransactionsUI) -> Unit) {
+            productTextView.text = productName.productSku
             productContainer.setOnClickListener {
                 onItemClick(productName)
             }
@@ -35,7 +37,8 @@ class ProductsAdapter(private val onItemClick: (String) -> Unit) : RecyclerView.
 
     override fun getItemCount() = productDataSet.size
 
-    fun updateData(dataset: List<String> = listOf()) {
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateData(dataset: List<ProductTransactionsUI> = listOf()) {
         productDataSet = dataset
         notifyDataSetChanged()
     }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/product_list_nav_graph"
+    app:startDestination="@id/productListFragment">
+
+    <fragment
+        android:id="@+id/productListFragment"
+        android:name="com.davidcastella.features.productlist.views.ProductListFragment"
+        android:label="GNB Transactions"
+        tools:layout="@layout/fragment_product_list" >
+        <action
+            android:id="@+id/action_productListFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/slide_out"
+            app:popEnterAnim="@anim/slide_pop_in"
+            app:popExitAnim="@anim/slide_pop_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/productDetailFragment"
+        android:name="com.davidcastella.features.productlist.views.ProductDetailFragment"
+        android:label="{productName}"
+        tools:layout="@layout/fragment_product_detail">
+        <argument
+            android:name="productName"
+            app:argType="string"
+            app:nullable="false" />
+        <argument
+            android:name="total"
+            app:argType="string"
+            app:nullable="false" />
+        <argument
+            android:name="amounts"
+            app:argType="string[]"
+            app:nullable="false" />
+    </fragment>
+</navigation>

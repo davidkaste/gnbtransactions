@@ -25,7 +25,7 @@ class ProductListViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        private val DEFAULT_CURRENCY = CurrencyCode.EUR
+        val DEFAULT_CURRENCY = CurrencyCode.EUR
     }
 
     private val _viewState: MutableStateFlow<ViewState> = MutableStateFlow(ViewState.Initial)
@@ -33,23 +33,19 @@ class ProductListViewModel @Inject constructor(
         get() = _viewState
 
     private lateinit var productList: List<ProductTransactionsUI>
+    private var hasToRequestData: Boolean = true
 
     sealed class ViewState {
         object Initial : ViewState()
         object Loading : ViewState()
         object Empty : ViewState()
-        class Success(val productNameList: List<String>) : ViewState()
+        class Success(val productNameList: List<ProductTransactionsUI>) : ViewState()
         class Error(val errorState: ErrorState) : ViewState()
-        class ProductDetails(
-            val productName: String,
-            val amounts: List<String>,
-            val total: String
-        ) : ViewState()
     }
 
     sealed class ViewEvent {
         object OnStart : ViewEvent()
-        class OnProductClick(val productName: String) : ViewEvent()
+        object OnFinishLoading: ViewEvent()
     }
 
     enum class ErrorState {
@@ -59,10 +55,11 @@ class ProductListViewModel @Inject constructor(
 
     fun dispatchEvent(event: ViewEvent) = when (event) {
         is ViewEvent.OnStart -> onStart()
-        is ViewEvent.OnProductClick -> onProductClick(event.productName)
+        is ViewEvent.OnFinishLoading -> onFinishLoading()
     }
 
     private fun onStart() {
+        if (!hasToRequestData) return
         _viewState.value = ViewState.Loading
         viewModelScope.launch {
             getTransactions(DEFAULT_CURRENCY)
@@ -75,6 +72,10 @@ class ProductListViewModel @Inject constructor(
         }
     }
 
+    private fun onFinishLoading() {
+        hasToRequestData = false
+    }
+
     private fun handleError(error: Failure) = when (error) {
         Failure.CONNECTION_FAILURE -> _viewState.value =
             ViewState.Error(ErrorState.CONNECTION_ERROR)
@@ -85,21 +86,7 @@ class ProductListViewModel @Inject constructor(
         if (list.isEmpty()) _viewState.value = ViewState.Empty
         else {
             productList = transactionListMapper(list)
-            _viewState.value = ViewState.Success(productList.map { it.productSku })
+            _viewState.value = ViewState.Success(productList)
         }
-    }
-
-    private fun onProductClick(productName: String) {
-        val product = productList.first { it.productSku == productName }
-        var total = BigDecimal.ZERO
-        val amounts = product.amountList.map {
-            total += it
-            it.toCurrencyString(DEFAULT_CURRENCY)
-        }
-        _viewState.value = ViewState.ProductDetails(
-            product.productSku,
-            amounts,
-            total.toCurrencyString(DEFAULT_CURRENCY)
-        )
     }
 }

@@ -25,7 +25,7 @@ class ProductListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        setupActionBarWithNavController(navController!!)
+        navController?.let { setupActionBarWithNavController(it) }
     }
 
     override fun onSupportNavigateUp() = navController?.navigateUp() ?: false

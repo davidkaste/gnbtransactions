@@ -27,7 +27,7 @@ It contains the use cases, domain entities and repositories specs. Use cases are
 It contains the _viewmodels_ and _views_ (_activities_, _fragments_...). The _ViewModel_ exposes an observable model and methods that the _view: will subscribe or call to interact with the business logic.
 
 ## 2. Future work
-- [ ] Use Navigation Component
+- [X] Use Navigation Component
 - [X] Migrate from Koin to Dagger Hilt (In fact, Koin is not a DI library, but a service locator)
 - [ ] UI + Instrumented Tests
   - [X] Adapters instrumented tests

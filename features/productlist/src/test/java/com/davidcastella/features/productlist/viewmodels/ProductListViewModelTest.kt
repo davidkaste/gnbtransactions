@@ -60,7 +60,7 @@ class ProductListViewModelTest {
                     is ProductListViewModel.ViewState.Initial -> assert(true)
                     is ProductListViewModel.ViewState.Loading -> assert(true)
                     is ProductListViewModel.ViewState.Success -> {
-                        assertEquals("prod", it.productNameList.first())
+                        assertEquals("prod", it.productNameList.first().productSku)
                         assert(true)
                     }
                     else -> assert(false)
@@ -170,17 +170,12 @@ class ProductListViewModelTest {
                     is ProductListViewModel.ViewState.Initial -> assert(true)
                     is ProductListViewModel.ViewState.Loading -> assert(true)
                     is ProductListViewModel.ViewState.Success -> assert(true)
-                    is ProductListViewModel.ViewState.ProductDetails -> {
-                        assertEquals(BigDecimal(34.6).toCurrencyString(CurrencyCode.EUR), it.amounts.first())
-                        assert(true)
-                    }
                     else -> assert(false)
                 }
             }
         }
 
         viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
-        viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnProductClick("prod"))
 
         job.cancel()
     }

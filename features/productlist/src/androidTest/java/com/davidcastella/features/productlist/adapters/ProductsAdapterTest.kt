@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.test.platform.app.InstrumentationRegistry
 import com.davidcastella.features.productlist.R
+import com.davidcastella.features.productlist.models.ProductTransactionsUI
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -20,7 +21,7 @@ class ProductsAdapterTest {
 
     private val context = InstrumentationRegistry.getInstrumentation().context
 
-    private val callback: (String) -> Unit = mockk()
+    private val callback: (ProductTransactionsUI) -> Unit = mockk()
     val mockView: View = mockk()
 
     @Before
@@ -63,7 +64,7 @@ class ProductsAdapterTest {
 
         val holder = ProductsAdapter.ViewHolder(mockView)
 
-        adapter.updateData(listOf("product1"))
+        adapter.updateData(listOf(ProductTransactionsUI("prod", listOf())))
         adapter.onBindViewHolder(holder, 0)
 
         verify(exactly = 2) { mockView.findViewById<View>(any()) }
@@ -73,7 +74,10 @@ class ProductsAdapterTest {
 
     @Test
     fun given_adapter_when_call_getItemCount_then_returns_correct_value() {
-        val expected = listOf("1", "2")
+        val expected = listOf(
+            ProductTransactionsUI("1", listOf()),
+            ProductTransactionsUI("2", listOf())
+        )
         adapter.updateData(expected)
         val count = adapter.itemCount
 

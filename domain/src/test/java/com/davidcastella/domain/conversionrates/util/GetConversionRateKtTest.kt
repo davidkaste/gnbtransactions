@@ -13,12 +13,12 @@ class GetConversionRateKtTest {
     @Before
     fun setUp() {
         list = listOf(
-            ConversionRate("AUD","EUR",1.27.toBigDecimal()),
-            ConversionRate("EUR","AUD",0.79.toBigDecimal()),
-            ConversionRate("AUD","CAD",1.06.toBigDecimal()),
-            ConversionRate("CAD","AUD",0.94.toBigDecimal()),
-            ConversionRate("EUR","USD",0.64.toBigDecimal()),
-            ConversionRate("USD","EUR",1.56.toBigDecimal())
+            ConversionRate("AUD", "EUR", 1.27.toBigDecimal()),
+            ConversionRate("EUR", "AUD", 0.79.toBigDecimal()),
+            ConversionRate("AUD", "CAD", 1.06.toBigDecimal()),
+            ConversionRate("CAD", "AUD", 0.94.toBigDecimal()),
+            ConversionRate("EUR", "USD", 0.64.toBigDecimal()),
+            ConversionRate("USD", "EUR", 1.56.toBigDecimal())
         )
     }
 

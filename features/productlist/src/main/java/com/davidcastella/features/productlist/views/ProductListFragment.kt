@@ -21,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ProductListFragment : Fragment() {
@@ -48,18 +49,7 @@ class ProductListFragment : Fragment() {
         setupRecyclerView()
 
         lifecycleScope.launch {
-            viewModel.viewState.collect {
-                when (it) {
-                    is ProductListViewModel.ViewState.Initial -> {}
-                    is ProductListViewModel.ViewState.Loading -> setLoading(true)
-                    is ProductListViewModel.ViewState.Empty -> setEmpty()
-                    is ProductListViewModel.ViewState.Success -> setSuccess(
-                        it.productNameList,
-                        adapter
-                    )
-                    is ProductListViewModel.ViewState.Error -> setError(it.errorState)
-                }
-            }
+            viewModel.viewState.collect { handleState(it) }
         }
 
         viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
@@ -98,6 +88,17 @@ class ProductListFragment : Fragment() {
             amounts.toTypedArray()
         )
         findNavController().navigate(action)
+    }
+
+    private fun handleState(state: ProductListViewModel.ViewState) = when (state) {
+        is ProductListViewModel.ViewState.Initial -> {}
+        is ProductListViewModel.ViewState.Loading -> setLoading(true)
+        is ProductListViewModel.ViewState.Empty -> setEmpty()
+        is ProductListViewModel.ViewState.Success -> setSuccess(
+            state.productNameList,
+            adapter
+        )
+        is ProductListViewModel.ViewState.Error -> setError(state.errorState)
     }
 
     private fun setLoading(isLoading: Boolean) {

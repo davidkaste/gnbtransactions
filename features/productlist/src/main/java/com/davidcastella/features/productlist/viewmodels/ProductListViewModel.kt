@@ -56,9 +56,13 @@ class ProductListViewModel @Inject constructor(
         is ViewEvent.OnFinishLoading -> onFinishLoading()
     }
 
+    private fun drop(state: ViewState) {
+        _viewState.value = state
+    }
+
     private fun onStart() {
         if (!hasToRequestData) return
-        _viewState.value = ViewState.Loading
+        drop(ViewState.Loading)
         viewModelScope.launch {
             getTransactions(DEFAULT_CURRENCY)
                 .collect {
@@ -75,16 +79,15 @@ class ProductListViewModel @Inject constructor(
     }
 
     private fun handleError(error: Failure) = when (error) {
-        Failure.CONNECTION_FAILURE -> _viewState.value =
-            ViewState.Error(ErrorState.CONNECTION_ERROR)
-        else -> _viewState.value = ViewState.Error(ErrorState.GENERIC_ERROR)
+        Failure.CONNECTION_FAILURE -> drop(ViewState.Error(ErrorState.CONNECTION_ERROR))
+        else -> drop(ViewState.Error(ErrorState.GENERIC_ERROR))
     }
 
     private fun handleSuccess(list: List<Transaction>) {
-        if (list.isEmpty()) _viewState.value = ViewState.Empty
+        if (list.isEmpty()) drop(ViewState.Empty)
         else {
             productList = transactionListMapper(list)
-            _viewState.value = ViewState.Success(productList)
+            drop(ViewState.Success(productList))
         }
     }
 }

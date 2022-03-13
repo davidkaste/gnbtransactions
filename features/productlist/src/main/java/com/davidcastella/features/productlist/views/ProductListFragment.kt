@@ -21,7 +21,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ProductListFragment : Fragment() {

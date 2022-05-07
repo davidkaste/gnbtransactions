@@ -32,6 +32,7 @@ It contains the _viewmodels_ and _views_ (_activities_, _fragments_...). The _Vi
 - [ ] UI + Instrumented Tests
   - [X] Adapters instrumented tests
   - [ ] Activities Espresso tests
+- [ ] Migrate UI to Jetpack Compose
 
 ## Feedback
 #### Pros

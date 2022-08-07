@@ -11,7 +11,7 @@ java {
 
 dependencies {
     implementation project(":data")
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.5.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
     // networking
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"

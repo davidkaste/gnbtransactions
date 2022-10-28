@@ -1,10 +1,7 @@
 package com.davidcastella.features.productlist.viewmodels
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import arrow.core.Either
-import com.davidcastella.domain.conversionrates.entities.CurrencyCode
 import com.davidcastella.domain.core.failure.Failure
-import com.davidcastella.domain.core.util.toCurrencyString
 import com.davidcastella.domain.transactions.entities.Transaction
 import com.davidcastella.domain.transactions.interactors.GetTransactions
 import com.davidcastella.features.productlist.mappers.TransactionListMapper
@@ -14,19 +11,16 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TestRule
 import java.math.BigDecimal
 
+@ExperimentalCoroutinesApi
 class ProductListViewModelTest {
 
     private lateinit var viewModel: ProductListViewModel
@@ -34,29 +28,21 @@ class ProductListViewModelTest {
     private val useCase: GetTransactions = mockk()
     private val mapper: TransactionListMapper = mockk()
 
-    @get:Rule
-    var rule: TestRule = InstantTaskExecutorRule()
-
-    @ExperimentalCoroutinesApi
-    val dispatcher = TestCoroutineDispatcher()
-
-    @ExperimentalCoroutinesApi
     @Before
     fun setUp() {
-        Dispatchers.setMain(dispatcher)
+        Dispatchers.setMain(Dispatchers.Unconfined)
         viewModel = ProductListViewModel(useCase, mapper)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
-    fun `given viewmodel when receive start event then request transactions`() = runBlockingTest {
+    fun `given viewmodel when receive start event then request transactions`() = runTest {
         ArrangeBuilder()
             .withUseCaseCallSuccess(listOf(Transaction("prod", BigDecimal(34.6), "EUR")))
             .withMapperCall(listOf(ProductTransactionsUI("prod", listOf(BigDecimal(34.6)))))
 
         val job = launch {
             viewModel.viewState.collect {
-                when(it) {
+                when (it) {
                     is ProductListViewModel.ViewState.Initial -> assert(true)
                     is ProductListViewModel.ViewState.Loading -> assert(true)
                     is ProductListViewModel.ViewState.Success -> {
@@ -70,21 +56,20 @@ class ProductListViewModelTest {
 
         viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
 
-        verify (exactly = 1) { useCase(any()) }
-        verify (exactly = 1) { mapper(any()) }
+        verify(exactly = 1) { useCase(any()) }
+        verify(exactly = 1) { mapper(any()) }
 
         job.cancel()
     }
 
-    @ExperimentalCoroutinesApi
     @Test
-    fun `given viewmodel when receive start event then request empty transactions`() = runBlockingTest {
+    fun `given viewmodel when receive start event then request empty transactions`() = runTest {
         ArrangeBuilder()
             .withUseCaseCallSuccess(listOf())
 
         val job = launch {
             viewModel.viewState.collect {
-                when(it) {
+                when (it) {
                     is ProductListViewModel.ViewState.Initial -> assert(true)
                     is ProductListViewModel.ViewState.Loading -> assert(true)
                     is ProductListViewModel.ViewState.Empty -> assert(true)
@@ -95,90 +80,96 @@ class ProductListViewModelTest {
 
         viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
 
-        verify (exactly = 1) { useCase(any()) }
-        verify (exactly = 0) { mapper(any()) }
+        verify(exactly = 1) { useCase(any()) }
+        verify(exactly = 0) { mapper(any()) }
 
         job.cancel()
     }
 
-    @ExperimentalCoroutinesApi
     @Test
-    fun `given viewmodel when receive start event fails then request generic error state`() = runBlockingTest {
-        ArrangeBuilder()
-            .withUseCaseCallFailure(Failure.GENERIC_FAILURE)
+    fun `given viewmodel when receive start event fails then request generic error state`() =
+        runTest {
+            ArrangeBuilder()
+                .withUseCaseCallFailure(Failure.GENERIC_FAILURE)
 
-        val job = launch {
-            viewModel.viewState.collect {
-                when(it) {
-                    is ProductListViewModel.ViewState.Initial -> assert(true)
-                    is ProductListViewModel.ViewState.Loading -> assert(true)
-                    is ProductListViewModel.ViewState.Error -> {
-                        assert(true)
-                        assertEquals(ProductListViewModel.ErrorState.GENERIC_ERROR, it.errorState)
+            val job = launch {
+                viewModel.viewState.collect {
+                    when (it) {
+                        is ProductListViewModel.ViewState.Initial -> assert(true)
+                        is ProductListViewModel.ViewState.Loading -> assert(true)
+                        is ProductListViewModel.ViewState.Error -> {
+                            assert(true)
+                            assertEquals(
+                                ProductListViewModel.ErrorState.GENERIC_ERROR,
+                                it.errorState
+                            )
+                        }
+                        else -> assert(false)
                     }
-                    else -> assert(false)
                 }
             }
+
+            viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
+
+            verify(exactly = 1) { useCase(any()) }
+            verify(exactly = 0) { mapper(any()) }
+
+            job.cancel()
         }
 
-        viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
-
-        verify (exactly = 1) { useCase(any()) }
-        verify (exactly = 0) { mapper(any()) }
-
-        job.cancel()
-    }
-
-    @ExperimentalCoroutinesApi
     @Test
-    fun `given viewmodel when receive start event fails then request connection error state`() = runBlockingTest {
-        ArrangeBuilder()
-            .withUseCaseCallFailure(Failure.CONNECTION_FAILURE)
+    fun `given viewmodel when receive start event fails then request connection error state`() =
+        runTest {
+            ArrangeBuilder()
+                .withUseCaseCallFailure(Failure.CONNECTION_FAILURE)
 
-        val job = launch {
-            viewModel.viewState.collect {
-                when(it) {
-                    is ProductListViewModel.ViewState.Initial -> assert(true)
-                    is ProductListViewModel.ViewState.Loading -> assert(true)
-                    is ProductListViewModel.ViewState.Error -> {
-                        assert(true)
-                        assertEquals(ProductListViewModel.ErrorState.CONNECTION_ERROR, it.errorState)
+            val job = launch {
+                viewModel.viewState.collect {
+                    when (it) {
+                        is ProductListViewModel.ViewState.Initial -> assert(true)
+                        is ProductListViewModel.ViewState.Loading -> assert(true)
+                        is ProductListViewModel.ViewState.Error -> {
+                            assert(true)
+                            assertEquals(
+                                ProductListViewModel.ErrorState.CONNECTION_ERROR,
+                                it.errorState
+                            )
+                        }
+                        else -> assert(false)
                     }
-                    else -> assert(false)
                 }
             }
+
+            viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
+
+            verify(exactly = 1) { useCase(any()) }
+            verify(exactly = 0) { mapper(any()) }
+
+            job.cancel()
         }
 
-        viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
-
-        verify (exactly = 1) { useCase(any()) }
-        verify (exactly = 0) { mapper(any()) }
-
-        job.cancel()
-    }
-
-    @ExperimentalCoroutinesApi
     @Test
-    fun `given viewmodel when receive on product click event then request empty transactions`() = runBlockingTest {
-        ArrangeBuilder()
-            .withUseCaseCallSuccess(listOf(Transaction("prod", BigDecimal(34.6), "EUR")))
-            .withMapperCall(listOf(ProductTransactionsUI("prod", listOf(BigDecimal(34.6)))))
+    fun `given viewmodel when receive on product click event then request empty transactions`() =
+        runTest {
+            ArrangeBuilder()
+                .withUseCaseCallSuccess(listOf(Transaction("prod", BigDecimal(34.6), "EUR")))
+                .withMapperCall(listOf(ProductTransactionsUI("prod", listOf(BigDecimal(34.6)))))
 
-        val job = launch {
-            viewModel.viewState.collect {
-                when(it) {
-                    is ProductListViewModel.ViewState.Initial -> assert(true)
-                    is ProductListViewModel.ViewState.Loading -> assert(true)
-                    is ProductListViewModel.ViewState.Success -> assert(true)
-                    else -> assert(false)
+            val job = launch {
+                viewModel.viewState.collect {
+                    when (it) {
+                        is ProductListViewModel.ViewState.Initial -> assert(true)
+                        is ProductListViewModel.ViewState.Loading -> assert(true)
+                        is ProductListViewModel.ViewState.Success -> assert(true)
+                        else -> assert(false)
+                    }
                 }
             }
+
+            viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
+
+            job.cancel()
         }
-
-        viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
-
-        job.cancel()
-    }
 
     inner class ArrangeBuilder {
         fun withUseCaseCallSuccess(response: List<Transaction>): ArrangeBuilder {

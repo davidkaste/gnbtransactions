@@ -7,10 +7,10 @@ import com.davidcastella.domain.conversionrates.repositories.ConversionRatesRepo
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import dagger.hilt.android.components.ViewModelComponent
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 abstract class ConversionRatesDataModule {
 
     @Binds

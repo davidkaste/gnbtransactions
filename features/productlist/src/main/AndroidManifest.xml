@@ -4,10 +4,6 @@
 
     <application>
         <activity
-            android:name=".views.ProductDetailActivity"
-            android:screenOrientation="portrait"
-            android:exported="false" />
-        <activity
             android:name=".views.ProductListActivity"
             android:screenOrientation="portrait"
             android:exported="true" />

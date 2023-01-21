@@ -18,7 +18,7 @@ interface GNBankService : BankService {
     override suspend fun getCurrencyRates(): List<ConversionRateResponseModel>
 
     companion object {
-        private const val BASE_URL = "https://quiet-stone-2094.herokuapp.com/"
+        private const val BASE_URL = "https://android-ios-service.herokuapp.com/"
 
         @JvmStatic
         fun create(): GNBankService = Retrofit.Builder()

@@ -7,15 +7,17 @@ import com.davidcastella.domain.transactions.repositories.TransactionsRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
+import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.components.SingletonComponent
 
 @Module
-@InstallIn(SingletonComponent::class)
-abstract class TransactionsDataModule {
+@InstallIn(ViewModelComponent::class)
+interface TransactionsDataModule {
 
     @Binds
-    abstract fun provideTransactionsDatasource(datasource: RemoteGNBTransactionsDatasource): GNBTransactionsDatasource
+    fun provideTransactionsDatasource(datasource: RemoteGNBTransactionsDatasource): GNBTransactionsDatasource
 
     @Binds
-    abstract fun provideTransactionsRepo(repository: TransactionsRepositoryImpl): TransactionsRepository
+    fun provideTransactionsRepo(repository: TransactionsRepositoryImpl): TransactionsRepository
 }

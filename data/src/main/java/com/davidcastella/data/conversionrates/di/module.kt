@@ -11,11 +11,11 @@ import dagger.hilt.android.components.ViewModelComponent
 
 @Module
 @InstallIn(ViewModelComponent::class)
-abstract class ConversionRatesDataModule {
+interface ConversionRatesDataModule {
 
     @Binds
-    abstract fun provideConversionRatesDatasource(datasource: RemoteGNBConversionRatesDatasource): GNBConversionRatesDatasource
+    fun provideConversionRatesDatasource(datasource: RemoteGNBConversionRatesDatasource): GNBConversionRatesDatasource
 
     @Binds
-    abstract fun provideConversionRatesRepo(repository: ConversionRatesRepositoryImpl): ConversionRatesRepository
+    fun provideConversionRatesRepo(repository: ConversionRatesRepositoryImpl): ConversionRatesRepository
 }

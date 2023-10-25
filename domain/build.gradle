@@ -8,8 +8,11 @@ android {
     compileSdk 33
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
     }
     namespace 'com.davidcastella.domain'
 }
@@ -18,8 +21,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
     //di
-    implementation "com.google.dagger:hilt-core:$hilt_version"
-    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+    implementation "com.google.dagger:hilt-android:$hilt_version"
 
     // arrow
     implementation "io.arrow-kt:arrow-core:$arrow_version"

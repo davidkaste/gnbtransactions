@@ -7,7 +7,8 @@ import javax.inject.Inject
 
 class RemoteGNBTransactionsDatasource @Inject constructor(
     private val service: BankService
-): GNBTransactionsDatasource {
+) : GNBTransactionsDatasource {
 
-    override suspend fun getTransactions(): List<TransactionResponseModel> = service.getTransactions()
+    override suspend fun getTransactions(): List<TransactionResponseModel> =
+        service.getTransactions()
 }

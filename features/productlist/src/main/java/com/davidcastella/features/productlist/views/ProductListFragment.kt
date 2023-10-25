@@ -18,7 +18,7 @@ import com.davidcastella.features.productlist.databinding.FragmentProductListBin
 import com.davidcastella.features.productlist.models.ProductTransactionsUI
 import com.davidcastella.features.productlist.viewmodels.ProductListViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
@@ -48,10 +48,8 @@ class ProductListFragment : Fragment() {
         setupRecyclerView()
 
         lifecycleScope.launch {
-            viewModel.viewState.collect { handleState(it) }
+            viewModel.viewState.collectLatest { handleState(it) }
         }
-
-        viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
     }
 
     override fun onDestroy() {
@@ -107,14 +105,12 @@ class ProductListFragment : Fragment() {
     private fun setEmpty() {
         setLoading(false)
         binding.emptyProductsTextView.isVisible = true
-        finishLoadingData()
     }
 
     private fun setSuccess(data: List<ProductTransactionsUI>, adapter: ProductsAdapter) {
         setLoading(false)
         binding.productList.isVisible = true
         adapter.updateData(data)
-        finishLoadingData()
     }
 
     private fun setError(error: ProductListViewModel.ErrorState) = when (error) {
@@ -128,9 +124,5 @@ class ProductListFragment : Fragment() {
             text = errorString
             visibility = View.VISIBLE
         }
-    }
-
-    private fun finishLoadingData() {
-        viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnFinishLoading)
     }
 }

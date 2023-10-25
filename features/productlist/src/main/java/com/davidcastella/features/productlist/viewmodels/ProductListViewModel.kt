@@ -10,10 +10,10 @@ import com.davidcastella.domain.transactions.interactors.GetTransactions
 import com.davidcastella.features.productlist.mappers.TransactionListMapper
 import com.davidcastella.features.productlist.models.ProductTransactionsUI
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class ProductListViewModel @Inject constructor(
@@ -30,7 +30,10 @@ class ProductListViewModel @Inject constructor(
         get() = _viewState
 
     private lateinit var productList: List<ProductTransactionsUI>
-    private var hasToRequestData: Boolean = true
+
+    init {
+        onStart()
+    }
 
     sealed class ViewState {
         object Initial : ViewState()
@@ -40,19 +43,9 @@ class ProductListViewModel @Inject constructor(
         class Error(val errorState: ErrorState) : ViewState()
     }
 
-    sealed class ViewEvent {
-        object OnStart : ViewEvent()
-        object OnFinishLoading : ViewEvent()
-    }
-
     enum class ErrorState {
         GENERIC_ERROR,
-        CONNECTION_ERROR,
-    }
-
-    fun dispatchEvent(event: ViewEvent) = when (event) {
-        is ViewEvent.OnStart -> onStart()
-        is ViewEvent.OnFinishLoading -> onFinishLoading()
+        CONNECTION_ERROR
     }
 
     private fun drop(state: ViewState) {
@@ -60,7 +53,6 @@ class ProductListViewModel @Inject constructor(
     }
 
     private fun onStart() {
-        if (!hasToRequestData) return
         drop(ViewState.Loading)
         viewModelScope.launch {
             getTransactions(DEFAULT_CURRENCY)
@@ -73,18 +65,15 @@ class ProductListViewModel @Inject constructor(
         }
     }
 
-    private fun onFinishLoading() {
-        hasToRequestData = false
-    }
-
     private fun handleError(error: Failure) = when (error) {
         Failure.CONNECTION_FAILURE -> drop(ViewState.Error(ErrorState.CONNECTION_ERROR))
         else -> drop(ViewState.Error(ErrorState.GENERIC_ERROR))
     }
 
     private fun handleSuccess(list: List<Transaction>) {
-        if (list.isEmpty()) drop(ViewState.Empty)
-        else {
+        if (list.isEmpty()) {
+            drop(ViewState.Empty)
+        } else {
             productList = transactionListMapper(list)
             drop(ViewState.Success(productList))
         }

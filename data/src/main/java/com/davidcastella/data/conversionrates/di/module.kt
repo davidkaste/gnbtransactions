@@ -1,7 +1,7 @@
 package com.davidcastella.data.conversionrates.di
 
-import com.davidcastella.data.conversionrates.datasources.GNBConversionRatesDatasource
-import com.davidcastella.data.conversionrates.datasources.remote.RemoteGNBConversionRatesDatasource
+import com.davidcastella.data.conversionrates.datasources.remote.RemoteConversionRatesDatasource
+import com.davidcastella.data.conversionrates.datasources.remote.RemoteConversionRatesDatasourceImpl
 import com.davidcastella.data.conversionrates.repositories.ConversionRatesRepositoryImpl
 import com.davidcastella.domain.conversionrates.repositories.ConversionRatesRepository
 import dagger.Binds
@@ -14,7 +14,7 @@ import dagger.hilt.android.components.ViewModelComponent
 interface ConversionRatesDataModule {
 
     @Binds
-    fun provideConversionRatesDatasource(datasource: RemoteGNBConversionRatesDatasource): GNBConversionRatesDatasource
+    fun provideConversionRatesDatasource(datasource: RemoteConversionRatesDatasourceImpl): RemoteConversionRatesDatasource
 
     @Binds
     fun provideConversionRatesRepo(repository: ConversionRatesRepositoryImpl): ConversionRatesRepository

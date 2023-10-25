@@ -1,4 +1,4 @@
-package com.davidcastella.data.conversionrates.repositories.mappers
+package com.davidcastella.data.conversionrates.datasources.remote.mappers
 
 import com.davidcastella.data.api.models.ConversionRateResponseModel
 import org.junit.Assert.assertEquals

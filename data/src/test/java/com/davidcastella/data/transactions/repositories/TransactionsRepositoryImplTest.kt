@@ -1,42 +1,34 @@
 package com.davidcastella.data.transactions.repositories
 
 import arrow.core.Either
-import com.davidcastella.data.api.models.TransactionResponseModel
-import com.davidcastella.data.transactions.datasources.GNBTransactionsDatasource
-import com.davidcastella.data.transactions.repositories.mappers.TransactionResponseModelMapper
+import com.davidcastella.data.transactions.datasources.remote.RemoteTransactionsDatasource
 import com.davidcastella.domain.core.failure.Failure
 import com.davidcastella.domain.transactions.entities.Transaction
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.io.IOException
-import java.net.UnknownHostException
 
 class TransactionsRepositoryImplTest {
 
     private lateinit var repository: TransactionsRepositoryImpl
 
-    private val datasource: GNBTransactionsDatasource = mockk()
-    private val mapper: TransactionResponseModelMapper = mockk()
+    private val datasource: RemoteTransactionsDatasource = mockk()
 
-    private val transactionModel = TransactionResponseModel("Product", 12.3, "EUR")
     private val transaction = Transaction("Product", 12.3.toBigDecimal(), "EUR")
 
     @Before
     fun setUp() {
-        coEvery { mapper.invoke(any()) } returns transaction
-
-        repository = TransactionsRepositoryImpl(datasource, mapper)
+        repository = TransactionsRepositoryImpl(datasource)
     }
 
     @Test
     fun `given repository when call getTransactions method succeeds then return correct data`() = runBlocking {
-        coEvery { datasource.getTransactions() } returns listOf(transactionModel)
+        coEvery { datasource.getTransactions() } returns listOf(transaction)
 
         val result = repository.getTransactions()
 
@@ -45,7 +37,6 @@ class TransactionsRepositoryImplTest {
         }
 
         coVerify(exactly = 1) { datasource.getTransactions() }
-        coVerify(exactly = 1) { mapper.invoke(any()) }
     }
 
     @Test
@@ -59,7 +50,6 @@ class TransactionsRepositoryImplTest {
         }
 
         coVerify(exactly = 1) { datasource.getTransactions() }
-        coVerify(exactly = 0) { mapper.invoke(any()) }
     }
 
     @Test
@@ -73,7 +63,6 @@ class TransactionsRepositoryImplTest {
         }
 
         coVerify(exactly = 1) { datasource.getTransactions() }
-        coVerify(exactly = 0) { mapper.invoke(any()) }
     }
 
     @Test
@@ -87,6 +76,5 @@ class TransactionsRepositoryImplTest {
         }
 
         coVerify(exactly = 1) { datasource.getTransactions() }
-        coVerify(exactly = 0) { mapper.invoke(any()) }
     }
 }

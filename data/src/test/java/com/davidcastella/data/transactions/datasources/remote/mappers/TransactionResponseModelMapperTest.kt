@@ -1,4 +1,4 @@
-package com.davidcastella.data.transactions.repositories.mappers
+package com.davidcastella.data.transactions.datasources.remote.mappers
 
 import com.davidcastella.data.api.models.TransactionResponseModel
 import org.junit.Assert.assertEquals

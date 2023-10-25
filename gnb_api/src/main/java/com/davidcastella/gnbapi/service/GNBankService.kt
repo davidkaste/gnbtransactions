@@ -1,4 +1,4 @@
-package com.davidcastella.gnb_api.service
+package com.davidcastella.gnbapi.service
 
 import com.davidcastella.data.api.BankService
 import com.davidcastella.data.api.models.ConversionRateResponseModel

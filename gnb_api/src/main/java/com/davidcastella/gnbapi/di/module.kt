@@ -1,7 +1,7 @@
-package com.davidcastella.gnb_api.di
+package com.davidcastella.gnbapi.di
 
 import com.davidcastella.data.api.BankService
-import com.davidcastella.gnb_api.service.GNBankService
+import com.davidcastella.gnbapi.service.GNBankService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

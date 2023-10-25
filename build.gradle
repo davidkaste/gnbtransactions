@@ -15,7 +15,7 @@ buildscript {
         navigation_version = "2.7.4"
         arch_core_testing_version = "2.2.0"
         arrow_version = "1.1.5"
-        hilt_version = "2.46.1"
+        hilt_version = "2.48.1"
         compose_version = "1.1.1"
     }
     repositories {
@@ -25,7 +25,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:8.1.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.22"
-        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.45'
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.48.1'
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.7.4"
 
         // NOTE: Do not place your application dependencies here; they belong

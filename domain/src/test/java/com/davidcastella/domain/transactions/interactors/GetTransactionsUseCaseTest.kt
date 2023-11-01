@@ -16,16 +16,16 @@ import org.junit.Before
 import org.junit.Test
 import java.math.BigDecimal
 
-class GetTransactionsTest {
+class GetTransactionsUseCaseTest {
 
-    private lateinit var useCase: GetTransactions
+    private lateinit var useCase: GetTransactionsUseCase
 
     private val repository: TransactionsRepository = mockk()
     private val conversionRatesRepository: ConversionRatesRepository = mockk()
 
     @Before
     fun setUp() {
-        useCase = GetTransactions(repository, conversionRatesRepository)
+        useCase = GetTransactionsUseCase(repository, conversionRatesRepository)
     }
 
     @Test

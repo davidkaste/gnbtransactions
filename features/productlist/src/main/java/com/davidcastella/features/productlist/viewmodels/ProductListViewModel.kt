@@ -8,7 +8,7 @@ import com.davidcastella.domain.conversionrates.entities.CurrencyCode
 import com.davidcastella.domain.core.failure.Failure
 import com.davidcastella.domain.core.util.fold
 import com.davidcastella.domain.transactions.entities.Transaction
-import com.davidcastella.domain.transactions.interactors.GetTransactions
+import com.davidcastella.domain.transactions.interactors.GetTransactionsUseCase
 import com.davidcastella.features.productlist.mappers.TransactionListMapper
 import com.davidcastella.features.productlist.models.ProductTransactionsUI
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ProductListViewModel @Inject constructor(
-    private val getTransactions: GetTransactions,
+    private val getTransactions: GetTransactionsUseCase,
     private val transactionListMapper: TransactionListMapper
 ) : ViewModel() {
 

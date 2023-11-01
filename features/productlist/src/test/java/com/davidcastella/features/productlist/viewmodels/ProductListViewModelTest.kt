@@ -4,7 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.davidcastella.domain.core.failure.Failure
 import com.davidcastella.domain.core.util.Result
 import com.davidcastella.domain.transactions.entities.Transaction
-import com.davidcastella.domain.transactions.interactors.GetTransactions
+import com.davidcastella.domain.transactions.interactors.GetTransactionsUseCase
 import com.davidcastella.features.productlist.mappers.TransactionListMapper
 import com.davidcastella.features.productlist.models.ProductTransactionsUI
 import io.mockk.coEvery
@@ -30,7 +30,7 @@ class ProductListViewModelTest {
 
     private lateinit var viewModel: ProductListViewModel
 
-    private val useCase: GetTransactions = mockk()
+    private val useCase: GetTransactionsUseCase = mockk()
     private val mapper: TransactionListMapper = mockk()
 
     @get:Rule

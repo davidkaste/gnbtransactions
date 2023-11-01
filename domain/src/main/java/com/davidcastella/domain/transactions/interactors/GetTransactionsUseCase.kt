@@ -16,7 +16,7 @@ import kotlinx.coroutines.withContext
 import java.math.RoundingMode
 import javax.inject.Inject
 
-class GetTransactions @Inject constructor(
+class GetTransactionsUseCase @Inject constructor(
     private val repository: TransactionsRepository,
     private val conversionRatesRepository: ConversionRatesRepository
 ) : SuspendUseCase<CurrencyCode, Result<Failure, List<Transaction>>> {

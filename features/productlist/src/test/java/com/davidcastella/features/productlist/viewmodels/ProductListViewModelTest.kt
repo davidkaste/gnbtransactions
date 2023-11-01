@@ -1,23 +1,28 @@
 package com.davidcastella.features.productlist.viewmodels
 
-import arrow.core.Either
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.davidcastella.domain.core.failure.Failure
+import com.davidcastella.domain.core.util.Result
 import com.davidcastella.domain.transactions.entities.Transaction
 import com.davidcastella.domain.transactions.interactors.GetTransactions
 import com.davidcastella.features.productlist.mappers.TransactionListMapper
 import com.davidcastella.features.productlist.models.ProductTransactionsUI
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
 import java.math.BigDecimal
 
 @ExperimentalCoroutinesApi
@@ -28,10 +33,12 @@ class ProductListViewModelTest {
     private val useCase: GetTransactions = mockk()
     private val mapper: TransactionListMapper = mockk()
 
+    @get:Rule
+    val rule: TestRule = InstantTaskExecutorRule()
+
     @Before
     fun setUp() {
         Dispatchers.setMain(Dispatchers.Unconfined)
-        viewModel = ProductListViewModel(useCase, mapper)
     }
 
     @Test
@@ -40,10 +47,12 @@ class ProductListViewModelTest {
             .withUseCaseCallSuccess(listOf(Transaction("prod", BigDecimal(34.6), "EUR")))
             .withMapperCall(listOf(ProductTransactionsUI("prod", listOf(BigDecimal(34.6)))))
 
+        viewModel = ProductListViewModel(useCase, mapper)
+
         val job = launch {
-            viewModel.viewState.collect {
+            viewModel.viewState.observeForever {
                 when (it) {
-                    is ProductListViewModel.ViewState.Initial -> assert(true)
+                    is ProductListViewModel.ViewState.Initial -> assert(false)
                     is ProductListViewModel.ViewState.Loading -> assert(true)
                     is ProductListViewModel.ViewState.Success -> {
                         assertEquals("prod", it.productNameList.first().productSku)
@@ -53,10 +62,9 @@ class ProductListViewModelTest {
                 }
             }
         }
+        advanceUntilIdle()
 
-        viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
-
-        verify(exactly = 1) { useCase(any()) }
+        coVerify(exactly = 1) { useCase(any()) }
         verify(exactly = 1) { mapper(any()) }
 
         job.cancel()
@@ -67,8 +75,10 @@ class ProductListViewModelTest {
         ArrangeBuilder()
             .withUseCaseCallSuccess(listOf())
 
+        viewModel = ProductListViewModel(useCase, mapper)
+
         val job = launch {
-            viewModel.viewState.collect {
+            viewModel.viewState.observeForever {
                 when (it) {
                     is ProductListViewModel.ViewState.Initial -> assert(true)
                     is ProductListViewModel.ViewState.Loading -> assert(true)
@@ -78,9 +88,7 @@ class ProductListViewModelTest {
             }
         }
 
-        viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
-
-        verify(exactly = 1) { useCase(any()) }
+        coVerify(exactly = 1) { useCase(any()) }
         verify(exactly = 0) { mapper(any()) }
 
         job.cancel()
@@ -92,8 +100,10 @@ class ProductListViewModelTest {
             ArrangeBuilder()
                 .withUseCaseCallFailure(Failure.GENERIC_FAILURE)
 
+            viewModel = ProductListViewModel(useCase, mapper)
+
             val job = launch {
-                viewModel.viewState.collect {
+                viewModel.viewState.observeForever {
                     when (it) {
                         is ProductListViewModel.ViewState.Initial -> assert(true)
                         is ProductListViewModel.ViewState.Loading -> assert(true)
@@ -109,9 +119,7 @@ class ProductListViewModelTest {
                 }
             }
 
-            viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
-
-            verify(exactly = 1) { useCase(any()) }
+            coVerify(exactly = 1) { useCase(any()) }
             verify(exactly = 0) { mapper(any()) }
 
             job.cancel()
@@ -123,8 +131,10 @@ class ProductListViewModelTest {
             ArrangeBuilder()
                 .withUseCaseCallFailure(Failure.CONNECTION_FAILURE)
 
+            viewModel = ProductListViewModel(useCase, mapper)
+
             val job = launch {
-                viewModel.viewState.collect {
+                viewModel.viewState.observeForever {
                     when (it) {
                         is ProductListViewModel.ViewState.Initial -> assert(true)
                         is ProductListViewModel.ViewState.Loading -> assert(true)
@@ -139,10 +149,9 @@ class ProductListViewModelTest {
                     }
                 }
             }
+            advanceUntilIdle()
 
-            viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
-
-            verify(exactly = 1) { useCase(any()) }
+            coVerify(exactly = 1) { useCase(any()) }
             verify(exactly = 0) { mapper(any()) }
 
             job.cancel()
@@ -155,8 +164,10 @@ class ProductListViewModelTest {
                 .withUseCaseCallSuccess(listOf(Transaction("prod", BigDecimal(34.6), "EUR")))
                 .withMapperCall(listOf(ProductTransactionsUI("prod", listOf(BigDecimal(34.6)))))
 
+            viewModel = ProductListViewModel(useCase, mapper)
+
             val job = launch {
-                viewModel.viewState.collect {
+                viewModel.viewState.observeForever {
                     when (it) {
                         is ProductListViewModel.ViewState.Initial -> assert(true)
                         is ProductListViewModel.ViewState.Loading -> assert(true)
@@ -166,19 +177,17 @@ class ProductListViewModelTest {
                 }
             }
 
-            viewModel.dispatchEvent(ProductListViewModel.ViewEvent.OnStart)
-
             job.cancel()
         }
 
     inner class ArrangeBuilder {
         fun withUseCaseCallSuccess(response: List<Transaction>): ArrangeBuilder {
-            every { useCase(any()) } returns flow { emit(Either.Right(response)) }
+            coEvery { useCase(any()) } returns Result.Success(response)
             return this
         }
 
         fun withUseCaseCallFailure(failure: Failure): ArrangeBuilder {
-            every { useCase(any()) } returns flow { emit(Either.Left(failure)) }
+            coEvery { useCase(any()) } returns Result.Failure(failure)
             return this
         }
 

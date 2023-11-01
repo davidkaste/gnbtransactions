@@ -1,18 +1,18 @@
 package com.davidcastella.features.productlist.viewmodels
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import arrow.core.Either
 import com.davidcastella.domain.conversionrates.entities.CurrencyCode
 import com.davidcastella.domain.core.failure.Failure
+import com.davidcastella.domain.core.util.fold
 import com.davidcastella.domain.transactions.entities.Transaction
 import com.davidcastella.domain.transactions.interactors.GetTransactions
 import com.davidcastella.features.productlist.mappers.TransactionListMapper
 import com.davidcastella.features.productlist.models.ProductTransactionsUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -25,9 +25,8 @@ class ProductListViewModel @Inject constructor(
         val DEFAULT_CURRENCY = CurrencyCode.EUR
     }
 
-    private val _viewState: MutableStateFlow<ViewState> = MutableStateFlow(ViewState.Initial)
-    val viewState: StateFlow<ViewState>
-        get() = _viewState
+    private val _viewState: MutableLiveData<ViewState> = MutableLiveData()
+    val viewState: LiveData<ViewState> = _viewState
 
     private lateinit var productList: List<ProductTransactionsUI>
 
@@ -36,9 +35,9 @@ class ProductListViewModel @Inject constructor(
     }
 
     sealed class ViewState {
-        object Initial : ViewState()
-        object Loading : ViewState()
-        object Empty : ViewState()
+        data object Initial : ViewState()
+        data object Loading : ViewState()
+        data object Empty : ViewState()
         class Success(val productNameList: List<ProductTransactionsUI>) : ViewState()
         class Error(val errorState: ErrorState) : ViewState()
     }
@@ -55,13 +54,10 @@ class ProductListViewModel @Inject constructor(
     private fun onStart() {
         drop(ViewState.Loading)
         viewModelScope.launch {
-            getTransactions(DEFAULT_CURRENCY)
-                .collect {
-                    when (it) {
-                        is Either.Left -> handleError(it.value)
-                        is Either.Right -> handleSuccess(it.value)
-                    }
-                }
+            getTransactions(DEFAULT_CURRENCY).fold(
+                isFailure = ::handleError,
+                isSuccess = ::handleSuccess
+            )
         }
     }
 

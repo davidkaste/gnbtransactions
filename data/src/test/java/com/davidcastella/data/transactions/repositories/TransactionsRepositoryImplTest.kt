@@ -1,8 +1,8 @@
 package com.davidcastella.data.transactions.repositories
 
-import arrow.core.Either
 import com.davidcastella.data.transactions.datasources.remote.RemoteTransactionsDatasource
 import com.davidcastella.domain.core.failure.Failure
+import com.davidcastella.domain.core.util.Result
 import com.davidcastella.domain.transactions.entities.Transaction
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -32,10 +32,7 @@ class TransactionsRepositoryImplTest {
 
         val result = repository.getTransactions()
 
-        result.collect {
-            assertEquals(transaction, (it as Either.Right).value.first())
-        }
-
+        assertEquals(transaction, (result as Result.Success).value.first())
         coVerify(exactly = 1) { datasource.getTransactions() }
     }
 
@@ -45,10 +42,7 @@ class TransactionsRepositoryImplTest {
 
         val result = repository.getTransactions()
 
-        result.collect {
-            assertEquals(Failure.GENERIC_FAILURE, (it as Either.Left).value)
-        }
-
+        assertEquals(Failure.GENERIC_FAILURE, (result as Result.Failure).failure)
         coVerify(exactly = 1) { datasource.getTransactions() }
     }
 
@@ -58,10 +52,7 @@ class TransactionsRepositoryImplTest {
 
         val result = repository.getTransactions()
 
-        result.collect {
-            assertEquals(Failure.CONNECTION_FAILURE, (it as Either.Left).value)
-        }
-
+        assertEquals(Failure.CONNECTION_FAILURE, (result as Result.Failure).failure)
         coVerify(exactly = 1) { datasource.getTransactions() }
     }
 
@@ -71,10 +62,7 @@ class TransactionsRepositoryImplTest {
 
         val result = repository.getTransactions()
 
-        result.collect {
-            assertEquals(Failure.HTTP_FAILURE, (it as Either.Left).value)
-        }
-
+        assertEquals(Failure.HTTP_FAILURE, (result as Result.Failure).failure)
         coVerify(exactly = 1) { datasource.getTransactions() }
     }
 }

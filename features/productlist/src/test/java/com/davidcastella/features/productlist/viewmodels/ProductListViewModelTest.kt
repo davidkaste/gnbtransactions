@@ -87,6 +87,7 @@ class ProductListViewModelTest {
                 }
             }
         }
+        advanceUntilIdle()
 
         coVerify(exactly = 1) { useCase(any()) }
         verify(exactly = 0) { mapper(any()) }
@@ -118,6 +119,7 @@ class ProductListViewModelTest {
                     }
                 }
             }
+            advanceUntilIdle()
 
             coVerify(exactly = 1) { useCase(any()) }
             verify(exactly = 0) { mapper(any()) }
@@ -176,6 +178,7 @@ class ProductListViewModelTest {
                     }
                 }
             }
+            advanceUntilIdle()
 
             job.cancel()
         }

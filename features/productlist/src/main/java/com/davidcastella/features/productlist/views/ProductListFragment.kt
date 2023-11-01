@@ -18,7 +18,6 @@ import com.davidcastella.features.productlist.databinding.FragmentProductListBin
 import com.davidcastella.features.productlist.models.ProductTransactionsUI
 import com.davidcastella.features.productlist.viewmodels.ProductListViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
@@ -48,7 +47,7 @@ class ProductListFragment : Fragment() {
         setupRecyclerView()
 
         lifecycleScope.launch {
-            viewModel.viewState.collectLatest { handleState(it) }
+            viewModel.viewState.observeForever { handleState(it) }
         }
     }
 

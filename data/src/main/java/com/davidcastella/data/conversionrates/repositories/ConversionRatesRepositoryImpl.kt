@@ -1,28 +1,26 @@
 package com.davidcastella.data.conversionrates.repositories
 
-import arrow.core.Either
 import com.davidcastella.data.conversionrates.datasources.remote.RemoteConversionRatesDatasource
 import com.davidcastella.domain.conversionrates.entities.ConversionRate
 import com.davidcastella.domain.conversionrates.repositories.ConversionRatesRepository
 import com.davidcastella.domain.core.failure.Failure
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import com.davidcastella.domain.core.util.Result
 import java.io.IOException
 import javax.inject.Inject
 
 class ConversionRatesRepositoryImpl @Inject constructor(
     private val datasource: RemoteConversionRatesDatasource
 ): ConversionRatesRepository {
-    override fun getConversionRates(): Flow<Either<Failure, List<ConversionRate>>> = flow {
+    override suspend fun getConversionRates(): Result<Failure, List<ConversionRate>> =
         try {
             val response = datasource.getConversionRates()
-            emit(Either.Right(response))
+            println(response)
+            Result.Success(response)
         } catch (ex: IOException) {
-            emit(Either.Left(Failure.CONNECTION_FAILURE))
+            Result.Failure(Failure.CONNECTION_FAILURE)
         } catch (ex: RuntimeException) {
-            emit(Either.Left(Failure.HTTP_FAILURE))
+            Result.Failure(Failure.HTTP_FAILURE)
         } catch (ex: Exception) {
-            emit(Either.Left(Failure.GENERIC_FAILURE))
+            Result.Failure(Failure.GENERIC_FAILURE)
         }
     }
-}

@@ -1,9 +1,9 @@
 package com.davidcastella.data.conversionrates.repositories
 
-import arrow.core.Either
 import com.davidcastella.data.conversionrates.datasources.remote.RemoteConversionRatesDatasource
 import com.davidcastella.domain.conversionrates.entities.ConversionRate
 import com.davidcastella.domain.core.failure.Failure
+import com.davidcastella.domain.core.util.Result
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -33,10 +33,7 @@ class ConversionRatesRepositoryImplTest {
 
             val result = repository.getConversionRates()
 
-            result.collect {
-                Assert.assertEquals(conversionRate, (it as Either.Right).value.first())
-            }
-
+            Assert.assertEquals(conversionRate, (result as Result.Success).value.first())
             coVerify(exactly = 1) { datasource.getConversionRates() }
         }
 
@@ -46,10 +43,7 @@ class ConversionRatesRepositoryImplTest {
             coEvery { datasource.getConversionRates() } throws Exception()
             val result = repository.getConversionRates()
 
-            result.collect {
-                Assert.assertEquals(Failure.GENERIC_FAILURE, (it as Either.Left).value)
-            }
-
+            Assert.assertEquals(Failure.GENERIC_FAILURE, (result as Result.Failure).failure)
             coVerify(exactly = 1) { datasource.getConversionRates() }
         }
 
@@ -59,10 +53,7 @@ class ConversionRatesRepositoryImplTest {
             coEvery { datasource.getConversionRates() } throws UnknownHostException()
             val result = repository.getConversionRates()
 
-            result.collect {
-                Assert.assertEquals(Failure.CONNECTION_FAILURE, (it as Either.Left).value)
-            }
-
+            Assert.assertEquals(Failure.CONNECTION_FAILURE, (result as Result.Failure).failure)
             coVerify(exactly = 1) { datasource.getConversionRates() }
         }
 
@@ -73,10 +64,7 @@ class ConversionRatesRepositoryImplTest {
 
             val result = repository.getConversionRates()
 
-            result.collect {
-                Assert.assertEquals(Failure.HTTP_FAILURE, (it as Either.Left).value)
-            }
-
+            Assert.assertEquals(Failure.HTTP_FAILURE, (result as Result.Failure).failure)
             coVerify(exactly = 1) { datasource.getConversionRates() }
         }
 }

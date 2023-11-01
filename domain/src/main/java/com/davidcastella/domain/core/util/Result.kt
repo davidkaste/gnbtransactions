@@ -15,7 +15,10 @@ inline fun <L, R, A> Result<L, R>.flatMap(f: (R) -> Result<L, A>): Result<L, A> 
     is Result.Failure -> this
 }
 
-inline fun <L, R, A> Result<L, R>.fold(isFailure: (failure: L) -> A, isSuccess: (success: R) -> A): A =
+inline fun <L, R, A> Result<L, R>.fold(
+    isFailure: (failure: L) -> A,
+    isSuccess: (success: R) -> A
+): A =
     when (this) {
         is Result.Success -> isSuccess(value)
         is Result.Failure -> isFailure(failure)

@@ -14,7 +14,6 @@ buildscript {
         lifecycle_version = "2.5.1"
         navigation_version = "2.7.4"
         arch_core_testing_version = "2.2.0"
-        arrow_version = "1.1.5"
         hilt_version = "2.48.1"
         compose_version = "1.1.1"
     }

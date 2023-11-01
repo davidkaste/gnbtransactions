@@ -1,18 +1,16 @@
 package com.davidcastella.domain.transactions.interactors
 
-import arrow.core.Either
 import com.davidcastella.domain.conversionrates.entities.ConversionRate
 import com.davidcastella.domain.conversionrates.entities.CurrencyCode
 import com.davidcastella.domain.conversionrates.repositories.ConversionRatesRepository
 import com.davidcastella.domain.core.failure.Failure
+import com.davidcastella.domain.core.util.Result
 import com.davidcastella.domain.transactions.entities.Transaction
 import com.davidcastella.domain.transactions.repositories.TransactionsRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -32,7 +30,7 @@ class GetTransactionsTest {
 
     @Test
     fun `given usecase when call invoke then call repository and combine result with getConversionTypes`() =
-        runBlocking {
+        runTest {
             ArrangeBuilder()
                 .withTransactionsSuccess(getTransactionListStub())
                 .withConversionRatesSuccess(getConversionListStub())
@@ -45,7 +43,7 @@ class GetTransactionsTest {
 
     @Test
     fun `given usecase when call invoke then should return transaction list with converted amount`() =
-        runBlocking {
+        runTest {
             ArrangeBuilder()
                 .withTransactionsSuccess(getTransactionListStub())
                 .withConversionRatesSuccess(getConversionListStub())
@@ -55,39 +53,33 @@ class GetTransactionsTest {
 
             val result = useCase(CurrencyCode.EUR)
 
-            result.collect {
-                val transaction = (it as Either.Right).value.first()
-                assertEquals(expected.amount, transaction.amount)
-                assertEquals(expected.currency, transaction.currency)
-            }
+            val transaction = (result as Result.Success).value.first()
+            assertEquals(expected.amount, transaction.amount)
+            assertEquals(expected.currency, transaction.currency)
         }
 
     @Test
     fun `given usecase when call invoke fails then should return failure`() =
-        runBlocking {
+        runTest {
             ArrangeBuilder()
                 .withTransactionsFailure()
                 .withConversionRatesSuccess(getConversionListStub())
 
             val result = useCase(CurrencyCode.EUR)
 
-            result.collect {
-                assertEquals(Failure.GENERIC_FAILURE, (it as Either.Left).value)
-            }
+            assertEquals(Failure.GENERIC_FAILURE, (result as Result.Failure).failure)
         }
 
     @Test
     fun `given usecase when call invoke fails for conversionRepo then should return failure`() =
-        runBlocking {
+        runTest {
             ArrangeBuilder()
                 .withTransactionsSuccess(getTransactionListStub())
                 .withConversionRatesFailure()
 
             val result = useCase(CurrencyCode.EUR)
 
-            result.collect {
-                assertEquals(Failure.GENERIC_FAILURE, (it as Either.Left).value)
-            }
+            assertEquals(Failure.GENERIC_FAILURE, (result as Result.Failure).failure)
         }
 
     private fun getTransactionListStub() = listOf(
@@ -100,30 +92,22 @@ class GetTransactionsTest {
 
     inner class ArrangeBuilder {
         fun withTransactionsSuccess(response: List<Transaction>): ArrangeBuilder {
-            coEvery { repository.getTransactions() } returns flow {
-                emit(Either.Right(response))
-            }
+            coEvery { repository.getTransactions() } returns Result.Success(response)
             return this
         }
 
         fun withTransactionsFailure(): ArrangeBuilder {
-            coEvery { repository.getTransactions() } returns flow {
-                emit(Either.Left(Failure.GENERIC_FAILURE))
-            }
+            coEvery { repository.getTransactions() } returns Result.Failure(Failure.GENERIC_FAILURE)
             return this
         }
 
         fun withConversionRatesSuccess(response: List<ConversionRate>): ArrangeBuilder {
-            coEvery { conversionRatesRepository.getConversionRates() } returns flow {
-                emit(Either.Right(response))
-            }
+            coEvery { conversionRatesRepository.getConversionRates() } returns Result.Success(response)
             return this
         }
 
         fun withConversionRatesFailure(): ArrangeBuilder {
-            coEvery { conversionRatesRepository.getConversionRates() } returns flow {
-                emit(Either.Left(Failure.GENERIC_FAILURE))
-            }
+            coEvery { conversionRatesRepository.getConversionRates() } returns Result.Failure(Failure.GENERIC_FAILURE)
             return this
         }
     }
